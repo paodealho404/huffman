@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "avl.h"
 
-struct avl {
+struct avl
+{
     int item;
     int h;
     AVL* left;
@@ -145,9 +145,28 @@ AVL* add(AVL **root, AVL *avl, int item)
     return avl;
 }
 
+AVL* search(AVL *avl, int item, int *comp)
+{
+    *comp += 1;
+
+    if(is_avl_empty(avl) || (avl->item == item))
+    {
+        return avl;
+    }
+    else if(avl->item > item)
+    {
+        return search(avl->left, item, comp);
+    }
+    else
+    {
+        return search(avl->right, item, comp);
+    }
+}
+
 void print_pre_order(AVL *avl)
 {
-    if(!is_avl_empty(avl)){
+    if(!is_avl_empty(avl))
+    {
         printf(" %d ", avl->item);
         print_pre_order(avl->left);
         print_pre_order(avl->right);
