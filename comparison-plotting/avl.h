@@ -16,8 +16,10 @@ AVL* rotate_left(AVL *avl);
 
 AVL* rotate_right(AVL *avl);
 
-AVL* add(AVL **root, AVL *avl, int item);
+AVL* add_avl(AVL **root, AVL *avl, int item);
 
-AVL* search(AVL *avl, int item, int *comp);
+AVL* search_avl(AVL *avl, int item, int *comp);
 
-void print_pre_order(AVL *avl);
+void print_pre_order_avl(AVL *avl);
+
+void print_avl_root(AVL *avl);

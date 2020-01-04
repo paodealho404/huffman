@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include "binary_tree.h"
 
-typedef struct binary_tree
+struct binary_tree
 {
     int item;
-    struct BINARY_TREE *left;
-    struct BINARY_TREE *right;
+    BINARY_TREE *left;
+    BINARY_TREE *right;
 };
 
 int is_bt_empty(BINARY_TREE *bt)
@@ -30,7 +30,7 @@ BINARY_TREE* create_binary_tree(int item, BINARY_TREE *left, BINARY_TREE *right)
     return new_binary_tree;
 }
 
-BINARY_TREE* add(BINARY_TREE *bt, int item)
+BINARY_TREE* add_bt(BINARY_TREE *bt, int item)
 {
     if(is_bt_empty(bt))
     {
@@ -38,17 +38,17 @@ BINARY_TREE* add(BINARY_TREE *bt, int item)
     }
     else if(bt->item > item)
     {
-        bt->left = add(bt->left, item);
+        bt->left = add_bt(bt->left, item);
     }
     else
     {
-        bt->right = add(bt->right, item);
+        bt->right = add_bt(bt->right, item);
     }
 
     return bt;
 }
 
-BINARY_TREE* search(BINARY_TREE *bt, int item, int *comp)
+BINARY_TREE* search_bt(BINARY_TREE *bt, int item, int *comp)
 {
     *comp += 1;
 
@@ -58,20 +58,20 @@ BINARY_TREE* search(BINARY_TREE *bt, int item, int *comp)
     }
     else if(bt->item > item)
     {
-        return search(bt->left, item, comp);
+        return search_bt(bt->left, item, comp);
     }
     else
     {
-        return search(bt->right, item, comp);
+        return search_bt(bt->right, item, comp);
     }
 }
 
-void print_pre_order(BINARY_TREE *bt)
+void print_pre_order_bt(BINARY_TREE *bt)
 {
     if(!is_bt_empty(bt))
     {
         printf(" %d ", bt->item);
-        print_pre_order(bt->left);
-        print_pre_order(bt->right);
+        print_pre_order_bt(bt->left);
+        print_pre_order_bt(bt->right);
     }
 }

@@ -102,7 +102,7 @@ AVL* rotate_right(AVL *avl)
     return subtree_root;
 }
 
-AVL* add(AVL **root, AVL *avl, int item)
+AVL* add_avl(AVL **root, AVL *avl, int item)
 {
     if(is_avl_empty(avl))
     {
@@ -110,11 +110,11 @@ AVL* add(AVL **root, AVL *avl, int item)
     }
     else if(avl->item > item)
     {
-        avl->left = add(root, avl->left, item);
+        avl->left = add_avl(root, avl->left, item);
     }
     else
     {
-        avl->right = add(root, avl->right, item);
+        avl->right = add_avl(root, avl->right, item);
     }
 
     avl->h = h(avl);
@@ -145,7 +145,7 @@ AVL* add(AVL **root, AVL *avl, int item)
     return avl;
 }
 
-AVL* search(AVL *avl, int item, int *comp)
+AVL* search_avl(AVL *avl, int item, int *comp)
 {
     *comp += 1;
 
@@ -155,20 +155,26 @@ AVL* search(AVL *avl, int item, int *comp)
     }
     else if(avl->item > item)
     {
-        return search(avl->left, item, comp);
+        return search_avl(avl->left, item, comp);
     }
     else
     {
-        return search(avl->right, item, comp);
+        return search_avl(avl->right, item, comp);
     }
 }
 
-void print_pre_order(AVL *avl)
+void print_pre_order_avl(AVL *avl)
 {
     if(!is_avl_empty(avl))
     {
         printf(" %d ", avl->item);
-        print_pre_order(avl->left);
-        print_pre_order(avl->right);
+        print_pre_order_avl(avl->left);
+        print_pre_order_avl(avl->right);
     }
+}
+
+void print_avl_root(AVL *avl)
+{
+    if(!is_avl_empty(avl))
+        printf("%d\n", avl->item);
 }
