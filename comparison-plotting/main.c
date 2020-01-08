@@ -57,6 +57,10 @@ int main()
         printf("AVL (linear): %d comparacoes\n", comp_avl_lin);
         printf("AVL (random): %d comparacoes\n", comp_avl_random);
 
+        FILE *file = fopen("out.txt", "a");
+        fprintf(file, "%d %d %d %d %d\n", n, comp_bt_lin, comp_bt_random, comp_avl_lin, comp_avl_random);
+        fclose(file);
+
         comp_bt_lin = 0;
         comp_bt_random = 0;
         comp_avl_lin = 0;
