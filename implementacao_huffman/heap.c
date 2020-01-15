@@ -2,8 +2,31 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
 #include "heap.h"
+
+#define HEAP_MAX 1000
+
+/*
+    Nó de prioridade, possui um ponteiro pra void e um inteiro
+    referente a prioridade do nó.
+*/
+struct _p_node
+{
+    void *item;
+    int prio;
+};
+
+/*
+    Estrutura de Heap; Possui um Array de p_node_t e um inteiro
+    referente ao seu tamanho;
+*/
+struct _heap
+{
+    p_node_t* arr[HEAP_MAX];
+    int size;
+    int max_buffer_size;
+};
+
 
 /*
     Implementacao de um pop pra heap. Se a Heap nao estiver vazia,
@@ -147,7 +170,7 @@ void heapify(heap_t *heap, int parent)
 }
 
 /*
-    Retorna o filho a esquerda de i, que é o nó pai.
+    troca os valores entre as posições de memória informadas
 */
 void swap(p_node_t **p_1, p_node_t **p_2)
 {
@@ -165,9 +188,15 @@ int get_left_son(int i)
 }
 
 /*
-    Retorna o filho a esquerda de i, que é o nó pai.
+    Retorna o filho a direita de i, que é o nó pai.
 */
 int get_right_son(int i)
 {
     return (i*2) + 1;
+}
+
+// Verifica se a heap está vazia ou não
+int is_empty(heap_t *heap)
+{
+    return heap->size == 0 ? 1 : 0;
 }
