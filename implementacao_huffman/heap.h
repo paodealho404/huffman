@@ -7,7 +7,7 @@ void push_heap(heap_t *heap, void *p, int prio);
 p_node_t* new_node(void *p, int prio);
 heap_t* make_heap();
 
-void max_heapify(heap_t *heap);
+void min_heapify(heap_t *heap);
 void heapify(heap_t *heap, int parent);
 
 int get_right_son(int i);
