@@ -200,3 +200,14 @@ int is_empty(heap_t *heap)
 {
     return heap->size == 0 ? 1 : 0;
 }
+
+/**
+ * @brief Get the node item object
+ * 
+ * @param node
+ * @return void*
+ */
+void* get_node_item(p_node_t* node)
+{
+    return node->item;
+}

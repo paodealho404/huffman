@@ -23,3 +23,5 @@ p_node_t* cp_node(p_node_t *node);
 void print_arr(int arr[], int n);
 
 int is_empty(heap_t *heap);
+
+void* get_node_item(p_node_t* node);
