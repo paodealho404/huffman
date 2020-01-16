@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "heap.h" 
 
@@ -114,7 +115,7 @@ huff_node* pop_huff_heap(heap_t *heap)
 
 	if(!node) return NULL;
 
-	huff_node *huff = (huff_node*) node->item;
+	huff_node *huff = (huff_node*) get_node_item(node);
 
 	return huff;
 }

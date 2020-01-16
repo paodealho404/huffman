@@ -49,7 +49,7 @@ p_node_t* pop_heap(heap_t *heap)
         heap->arr[heap->size] = NULL;
         heap->size--;
 
-        max_heapify(heap);
+        min_heapify(heap);
 
         return n_node;
     }
@@ -80,7 +80,7 @@ p_node_t* cp_node(p_node_t *node)
 /*
     Push de heap. Aumenta o tamanho da heap, cria um novo
     node com os elementos que estao no argumento, e diz que
-    o ultimo elemento da heap e igual a ele. Faz um max_heapify.
+    o ultimo elemento da heap e igual a ele. Faz um min_heapify.
 */
 void push_heap(heap_t *heap, void *p, int prio)
 {
@@ -94,7 +94,7 @@ void push_heap(heap_t *heap, void *p, int prio)
         //realloc_heap(heap);
     }
 
-    max_heapify(heap);
+    min_heapify(heap);
 }
 /*
     Retorna um novo p_node_t.
@@ -131,7 +131,7 @@ heap_t* make_heap()
     Max_heapify, e heapify usando a estrutura de heap
     implementada.
 */
-void max_heapify(heap_t *heap)
+void min_heapify(heap_t *heap)
 {
     int i; 
     for(i = heap->size/2; i > 0 ; i--)
@@ -144,28 +144,28 @@ void heapify(heap_t *heap, int parent)
     int left = get_left_son(parent);
     int right = get_right_son(parent);
 
-    int largest = parent;
+    int smallest = parent;
 
     if(left <= heap->size)
     {
-        if(heap->arr[left]->prio > heap->arr[largest]->prio)
+        if(heap->arr[left]->prio < heap->arr[smallest]->prio)
         {
-            largest = left;
+            smallest = left;
         }
     }
 
     if(right <= heap->size)
     {
-        if(heap->arr[right]->prio > heap->arr[largest]->prio)
+        if(heap->arr[right]->prio < heap->arr[smallest]->prio)
         {
-            largest = right;
+            smallest = right;
         }
     }
 
-    if(largest != parent)
+    if(smallest != parent)
     {
-        swap(&heap->arr[largest], &heap->arr[parent]);
-        heapify(heap, largest);
+        swap(&heap->arr[smallest], &heap->arr[parent]);
+        heapify(heap, smallest);
     }
 }
 
@@ -199,4 +199,15 @@ int get_right_son(int i)
 int is_empty(heap_t *heap)
 {
     return heap->size == 0 ? 1 : 0;
+}
+
+/**
+ * @brief Get the node item object
+ * 
+ * @param node
+ * @return void*
+ */
+void* get_node_item(p_node_t* node)
+{
+    return node->item;
 }
