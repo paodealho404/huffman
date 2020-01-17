@@ -54,7 +54,7 @@ void init_huff_dict(huff_dict *dict);
 void generate_codes(huff_node *node, huff_dict *dict, int pos);
 
 count_b_t* new_count_b(u_char byte, int freq);
-count_b_t** make_count_arr(u_char *byte_str);
+int* make_count_arr(u_char *byte_str);
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i);
 int main()
 {
@@ -189,13 +189,13 @@ void push_huff_heap(heap_t *heap, huff_node *h_node)
 heap_t* make_huff_heap(u_char *byte_str)
 {
 	heap_t *heap = make_heap();
-	count_b_t **byte_arr = make_count_arr(byte_str);
+	int *freq_arr = make_count_arr(byte_str);
 
 	for(int i = 0; i < MAX_BYTE; i++)
 	{
-		if(byte_arr[i] != NULL)
+		if(freq_arr[i])
 		{
-			huff_node *node = new_huff_node(byte_arr[i]->byte, byte_arr[i]->freq, NULL, NULL);
+			huff_node *node = new_huff_node((u_char) i, freq_arr[i], NULL, NULL);
 			push_huff_heap(heap, node);
 		}
 	}
@@ -211,18 +211,21 @@ count_b_t* new_count_b(u_char byte, int freq)
 	return new;
 }
 
-count_b_t** make_count_arr(u_char *byte_str)
+int* make_count_arr(u_char *byte_str)
 {
-	count_b_t **byte_arr = (count_b_t**) malloc(sizeof(count_b_t*) * MAX_BYTE);
-
-	for(int i = 0; i < MAX_BYTE; i++)
-		byte_arr[i] = NULL;
-
 	b_tree* tree = (b_tree*)malloc(sizeof(b_tree));
 	for(int i = 0; i < MAX_B_TREE; i++)
 	{
 		tree->arr[i] = NULL;
 	}
+
+	int *freq_arr = (int*)malloc(sizeof(int) * MAX_BYTE);
+
+	for (int i = 0; i < MAX_BYTE; i++)
+	{
+		freq_arr[i] = 0;
+	}
+	
 
 	int j = 0;
 	for (int i = 0; i < strlen(byte_str); i++)
@@ -230,28 +233,27 @@ count_b_t** make_count_arr(u_char *byte_str)
 		count_b_t *temp = count_byte(tree, byte_str[i], 1, 0);
 		if(temp)
 		{
-			byte_arr[j] = temp;
-			j++;
+			freq_arr[temp->byte] = temp->freq;
 		}
 	}
-	return byte_arr;
+	return freq_arr;
 }
 
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i)
 {
 	if(i > 7)
 	{
-			if(tree->arr[index] == NULL)
-			{
-				count_b_t* new = new_count_b(byte, 1);
-				tree->arr[index] = new;
-				return new;
-			}
-			else
-			{
-				tree->arr[index]->freq++;
-				return NULL;
-			}
+		if(tree->arr[index] == NULL)
+		{
+			count_b_t* new = new_count_b(byte, 1);
+			tree->arr[index] = new;
+			return new;
+		}
+		else
+		{
+			tree->arr[index]->freq++;
+			return tree->arr[index];
+		}
 	}
 
 	if(is_bit_i_set(byte, i))
