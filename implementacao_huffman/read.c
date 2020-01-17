@@ -4,6 +4,27 @@
 #include "huffman.h"
 #include "heap.h"
 
+#define MAX_B_TREE 600
+#define MAX_BYTE 255
+
+// tipo pra contar os bytes da arvore
+struct _count_b
+{
+	u_char byte;
+	int freq;
+};
+
+typedef struct _count_b count_b_t;
+
+// arvore pra contar os bytes
+
+struct _count_b_tree
+{
+	count_b_t* arr[MAX_B_TREE];
+};
+
+typedef struct _count_b_tree b_tree;
+
 struct _huffman_dict
 {
 	u_char codes[256][256];
@@ -32,12 +53,16 @@ int cmp_char(const void *a, const void *b);
 void init_huff_dict(huff_dict *dict);
 void generate_codes(huff_node *node, huff_dict *dict, int pos);
 
+count_b_t* new_count_b(u_char byte, int freq);
+count_b_t** make_count_arr(u_char *byte_str);
+count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i);
 int main()
 {
 	int i;
 	u_char *bytes_arr;
 	bytes_arr = read_bytes("teste.txt");
 	heap_t *heap = make_huff_heap(bytes_arr);
+					printf("works\n");
 	
 	huff_dict dict;
 	init_huff_dict(&dict);
@@ -65,6 +90,8 @@ int main()
 	
     return 0;
 }
+
+
 
 void print_huff_heap(heap_t *heap)
 {
@@ -158,26 +185,83 @@ void push_huff_heap(heap_t *heap, huff_node *h_node)
 
 	Retorna a heap ja pronta. Talvez precise ficar mais abstrato.
 */
+
 heap_t* make_huff_heap(u_char *byte_str)
 {
 	heap_t *heap = make_heap();
-	sort_byte_str(byte_str);
+	count_b_t **byte_arr = make_count_arr(byte_str);
 
-	int i, freq = 1;
-	u_char byte = byte_str[0];
-
-	for(i = 1; i <= strlen(byte_str); i++)
+	for(int i = 0; i < MAX_BYTE; i++)
 	{
-		if(byte_str[i] != byte || i == strlen(byte_str))
+		if(byte_arr[i] != NULL)
 		{
-			huff_node *node = new_huff_node(byte_str[i - 1], freq, NULL, NULL);
+			huff_node *node = new_huff_node(byte_arr[i]->byte, byte_arr[i]->freq, NULL, NULL);
 			push_huff_heap(heap, node);
-			byte = byte_str[i];
-			freq = 0;
 		}
-		freq++;
 	}
 	return heap;
+}
+
+count_b_t* new_count_b(u_char byte, int freq)
+{
+	count_b_t *new = (count_b_t*) malloc(sizeof(count_b_t));
+
+	new->byte = byte;
+	new->freq = freq;
+	return new;
+}
+
+count_b_t** make_count_arr(u_char *byte_str)
+{
+	count_b_t **byte_arr = (count_b_t**) malloc(sizeof(count_b_t*) * MAX_BYTE);
+
+	for(int i = 0; i < MAX_BYTE; i++)
+		byte_arr[i] = NULL;
+
+	b_tree* tree = (b_tree*)malloc(sizeof(b_tree));
+	for(int i = 0; i < MAX_B_TREE; i++)
+	{
+		tree->arr[i] = NULL;
+	}
+
+	int j = 0;
+	for (int i = 0; i < strlen(byte_str); i++)
+	{
+		count_b_t *temp = count_byte(tree, byte_str[i], 1, 0);
+		if(temp)
+		{
+			byte_arr[j] = temp;
+			j++;
+		}
+	}
+	return byte_arr;
+}
+
+count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i)
+{
+	if(i > 7)
+	{
+			if(tree->arr[index] == NULL)
+			{
+				count_b_t* new = new_count_b(byte, 1);
+				tree->arr[index] = new;
+				return new;
+			}
+			else
+			{
+				tree->arr[index]->freq++;
+				return NULL;
+			}
+	}
+
+	if(is_bit_i_set(byte, i))
+	{
+		return count_byte(tree, byte, get_right_son(index), i+1);
+	}
+	else
+	{
+		return count_byte(tree, byte, get_left_son(index), i+1);
+	}
 }
 
 /*
