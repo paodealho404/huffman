@@ -30,6 +30,7 @@ struct _huffman_dict
 	u_char codes[256][256];
 	unsigned short path_bits[256];
 	int length[256];
+	int freq[256];
 };
 
 // tipo para os codigos de huffman
@@ -310,7 +311,7 @@ void generate_codes(huff_node *node, huff_dict *dict, int level)
         dict->path_bits[level] = 1;
         generate_codes(get_right_node(node), dict, level + 1);
     }
-    if(is_huff_empty(get_right_node(node)) && is_huff_empty(get_left_node(node)))
+    if(is_huff_leaf(node))
     {
         int i;
         for(i = 0; i < level; i++)
@@ -318,5 +319,6 @@ void generate_codes(huff_node *node, huff_dict *dict, int level)
             dict->codes[get_byte(node)][i] = dict->path_bits[i];
         }
 		dict->length[get_byte(node)] = level;
+		dict->freq[get_byte(node)] = get_frequency(node);
     }
 }

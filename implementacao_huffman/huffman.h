@@ -38,6 +38,8 @@ int set_bit(unsigned char x, int i);
 
 int is_huff_empty(huff_node *huff_tree);
 
+int is_huff_leaf(huff_node *node);
+
 huff_node* new_huff_node(u_char byte, int freq,
 						huff_node *left, huff_node *right);
 

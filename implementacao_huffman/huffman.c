@@ -28,6 +28,11 @@ int is_huff_empty(huff_node *huff_tree)
     return (huff_tree == NULL);
 }
 
+int is_huff_leaf(huff_node *node)
+{
+    return (is_huff_empty(node->left) && is_huff_empty(node->right));
+}
+
 huff_node* new_huff_node(u_char byte, int freq, 
 						huff_node *left, huff_node *right)
 {
