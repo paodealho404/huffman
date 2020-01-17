@@ -211,3 +211,8 @@ void* get_node_item(p_node_t* node)
 {
     return node->item;
 }
+
+int get_size(heap_t *heap)
+{
+    return heap->size;
+}

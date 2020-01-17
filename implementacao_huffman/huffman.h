@@ -7,6 +7,15 @@
 // Structs
 //
 
+// tipo padrão para o nó da huffman tree
+typedef struct _huffman_node huff_node;
+
+// tipo para abreviar unsigned char
+typedef unsigned char u_char;
+
+// heap utils
+typedef struct _p_node p_node_t;
+typedef struct _heap heap_t;
 
 // Return - int function()
 /**
@@ -27,160 +36,23 @@ int is_bit_i_set(unsigned char x, int i);
  */
 int set_bit(unsigned char x, int i);
 
+int is_huff_empty(huff_node *huff_tree);
 
-/** 
- * HEAP ADT 
- */ 
+huff_node* new_huff_node(u_char byte, int freq,
+						huff_node *left, huff_node *right);
 
+huff_node* build_huffman_tree(heap_t *heap);
 
-//
-//Structs
-//
+void print_huff_pre_order(huff_node *root);
 
-/**
- * @brief Nó padrão para a heap.
- * 
- */
-typedef struct _p_node p_node_t;
+u_char get_byte(huff_node *node);
 
-/**
- * @brief Estrutura da heap.
- * 
- */
-typedef struct _heap heap_t;
+int get_frequency(huff_node *node);
 
+huff_node* get_left_node(huff_node *node);
 
-// 
-// Return - void function()
-//
+huff_node* get_right_node(huff_node *node);
 
-/**
- * @brief Insere um elemento novo (p) com prioridade
- *  definida (prio) em uma Heap informada (heap)
- * 
- * @param heap 
- * @param p 
- * @param prio 
- */
-void push_heap(heap_t *heap, void *p, int prio);
+huff_node* pop_huff_heap(heap_t *heap);
 
-/**
- * @brief Altera a posição de dois nós informados ( (p_1) e (p_2) ).
- * 
- * @param p_1 
- * @param p_2 
- */
-void swap(p_node_t **p_1, p_node_t **p_2);
-
-/**
- * @brief Constrói uma Heap máxima a partir de uma Heap informada (heap).
- * 
- * @param heap 
- */
-void max_heapify(heap_t *heap);
-
-/**
- * @brief Busca e Reposiciona os nós de uma Heap infomada (heap) 
- * de modo a construir uma nova heap a partir de um de seus índices (parent).
- * 
- * @param heap 
- * @param parent 
- */
-void heapify(heap_t *heap, int parent);
-
-/**
- * @brief Imprime uma Heap informada (heap).
- * 
- * @param heap 
- */
-void print_heap(heap_t *heap);
-
-/**
- * @brief Imprime um array infomado (arr[]) de (n) indíces.
- * 
- * @param arr 
- * @param n 
- */
-void print_arr(int arr[], int n);
-
-
-//
-// Return - int function()
-//
-
-/**
- * @brief Retorna o estado de uma Heap informada (heap), retornando
- *  0 se estiver vazia ou 1 se não estiver vazia.
- * 
- * @param heap 
- * @return int 
- */
-int is_empty(heap_t *heap);
-
-/**
- * @brief Retorna o indice do elemento filho da direita de um dado indice (i).
- * 
- * @param i 
- * @return int 
- */
-int get_right_son(int i);
-
-/**
- * @brief Retorna o indice do elemento filho da esquerda de um dado indice (i).
- * 
- * @param i 
- * @return int 
- */
-int get_left_son(int i);
-
-
-//
-// Return - p_node_t function()
-//
-
-/**
- * @brief Cria e retorna um novo nó podendo conter qualquer elemento informadado (p)
- *  com uma dada prioridade (prio).
- * 
- * @param p 
- * @param prio 
- * @return p_node_t* 
- */
-p_node_t* new_node(void *p, int prio);
-
-/**
- * @brief Copia e retorna um novo nó com base em um nó informado (node).
- * 
- * @param node 
- * @return p_node_t* 
- */
-p_node_t* cp_node(p_node_t *node);
-
-/**
- * @brief Remove e retorna o nó de maior prioridade de uma Heap informada (heap).
- * 
- * @param heap 
- * @return p_node_t* 
- */
-p_node_t* pop_heap(heap_t *heap);
-
-
-//
-// Heap
-//
-/**
- * @brief Cria e inicializa uma Heap nova.
- * 
- * @return heap_t* 
- */
-heap_t* make_heap();
-
-
-
-
-
-
-
-
-
-
+void push_huff_heap(heap_t *heap, huff_node *h_node);
