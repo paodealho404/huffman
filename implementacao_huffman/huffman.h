@@ -153,6 +153,13 @@ void print_huff_pre_order(huff_node *root);
  */
 void push_huff_heap(heap_t *heap, huff_node *h_node);
 
+/**
+ * @brief Analiza o tamanho de uma Árvore de Huffman informada (node).
+ * 
+ * @param node 
+ * @param huff_tree_size 
+ */
+void huffman_tree_size(huff_node *node, long long int *huff_tree_size);
 
 //
 // Return - u_char function()
@@ -165,6 +172,7 @@ void push_huff_heap(heap_t *heap, huff_node *h_node);
  * @return u_char 
  */
 u_char get_byte(huff_node *node);
+
 
 
 
