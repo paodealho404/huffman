@@ -86,6 +86,10 @@ int main()
 		}
 	}
 
+	long long int huff_tree_size = 0;
+	
+	huffman_tree_size(huff_tree, &huff_tree_size);
+
 	print_huff_heap(heap);
 	printf("\n");
 	

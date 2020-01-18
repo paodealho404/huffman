@@ -95,3 +95,18 @@ huff_node* get_right_node(huff_node *node)
 {
     return node->right;
 }
+
+void huffman_tree_size(huff_node *node, long long int *huff_tree_size)
+{
+	if(node)
+	{
+		*huff_tree_size += 1;
+		if(is_huff_leaf(node))
+		{
+			return;
+		}
+
+		huffman_tree_size(node->left, huff_tree_size);
+		huffman_tree_size(node->right, huff_tree_size);
+	}
+}

@@ -58,3 +58,5 @@ huff_node* get_right_node(huff_node *node);
 huff_node* pop_huff_heap(heap_t *heap);
 
 void push_huff_heap(heap_t *heap, huff_node *h_node);
+
+void huffman_tree_size(huff_node *node, long long int *huff_tree_size);
