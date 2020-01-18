@@ -101,9 +101,10 @@ void huffman_tree_size(huff_node *node, long long int *huff_tree_size)
 	if(node)
 	{
 		*huff_tree_size += 1;
-		if(is_huff_leaf(node))
+
+		if(is_huff_leaf(node) && (node->byte == '*' || node->byte == '\\'))
 		{
-			return;
+			*huff_tree_size += 1;
 		}
 
 		huffman_tree_size(node->left, huff_tree_size);

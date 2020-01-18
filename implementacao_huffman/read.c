@@ -36,7 +36,7 @@ struct _huffman_dict
 // tipo para os codigos de huffman
 typedef struct _huffman_dict huff_dict;
 
-u_char* read_bytes(u_char *file_name);
+u_char* read_bytes(u_char *file_name, long *original_size);
 
 int bb_search(u_char *byte_str, u_char byte);
 int search_byte(u_char *byte_str, u_char byte);
@@ -46,7 +46,7 @@ void print_huff_heap(heap_t *heap);
 
 huff_node* pop_huff_heap(heap_t *heap);
 void push_huff_heap(heap_t *heap, huff_node *h_node);
-heap_t* make_huff_heap(u_char *byte_str);
+heap_t* make_huff_heap(u_char *byte_str, long *original_size);
 
 void sort_byte_str(u_char *byte_str);
 int cmp_char(const void *a, const void *b);
@@ -55,15 +55,20 @@ void init_huff_dict(huff_dict *dict);
 void generate_codes(huff_node *node, huff_dict *dict, int pos);
 
 count_b_t* new_count_b(u_char byte, int freq);
-int* make_count_arr(u_char *byte_str);
+int* make_count_arr(u_char *byte_str, long *original_size);
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i);
+
+int calc_trash_size(huff_dict *dict);
+
 int main()
 {
 	int i;
+	long original_size = 0;
 	u_char *bytes_arr;
-	bytes_arr = read_bytes("teste.txt");
-	heap_t *heap = make_huff_heap(bytes_arr);
-					printf("works\n");
+	bytes_arr = read_bytes("teste.txt", &original_size);
+	printf("%li\n", strlen(bytes_arr));
+	heap_t *heap = make_huff_heap(bytes_arr, &original_size);
+	printf("works\n");
 	
 	huff_dict dict;
 	init_huff_dict(&dict);
@@ -86,9 +91,12 @@ int main()
 		}
 	}
 
+	int trash_size = calc_trash_size(&dict);
+	printf("\ntrash size = %d\n", trash_size);
+
 	long long int huff_tree_size = 0;
-	
 	huffman_tree_size(huff_tree, &huff_tree_size);
+	printf("\nhuff tree size = %lli\n", huff_tree_size);
 
 	print_huff_heap(heap);
 	printf("\n");
@@ -116,7 +124,7 @@ void print_huff_heap(heap_t *heap)
 	em bytes + 1, pra guardar o '\0'. E ai fread joga todos os
 	bytes do arquivo dentro de um array de char. Char tem 1 byte.
 */
-u_char* read_bytes(u_char *file_name)
+u_char* read_bytes(u_char *file_name, long *original_size)
 {
 	FILE *file_ptr;
 	file_ptr = fopen(file_name, "rb");
@@ -132,10 +140,14 @@ u_char* read_bytes(u_char *file_name)
 
 	fseek(file_ptr, 0, SEEK_END);
 	file_length = ftell(file_ptr);
-	rewind(file_ptr);
+	printf("tam = %li\n", file_length);
+	fseek(file_ptr, 0, SEEK_SET);
 
 	buffer = (u_char *) malloc((file_length + 1) * sizeof(u_char));
 	fread(buffer, file_length, 1, file_ptr);
+	fclose(file_ptr);
+
+	*original_size = file_length;
 
 	return buffer;
 }
@@ -191,10 +203,10 @@ void push_huff_heap(heap_t *heap, huff_node *h_node)
 	Retorna a heap ja pronta. Talvez precise ficar mais abstrato.
 */
 
-heap_t* make_huff_heap(u_char *byte_str)
+heap_t* make_huff_heap(u_char *byte_str, long *original_size)
 {
 	heap_t *heap = make_heap();
-	int *freq_arr = make_count_arr(byte_str);
+	int *freq_arr = make_count_arr(byte_str, original_size);
 
 	for(int i = 0; i < MAX_BYTE; i++)
 	{
@@ -216,7 +228,7 @@ count_b_t* new_count_b(u_char byte, int freq)
 	return new;
 }
 
-int* make_count_arr(u_char *byte_str)
+int* make_count_arr(u_char *byte_str, long *original_size)
 {
 	b_tree* tree = (b_tree*)malloc(sizeof(b_tree));
 	for(int i = 0; i < MAX_B_TREE; i++)
@@ -233,7 +245,8 @@ int* make_count_arr(u_char *byte_str)
 	
 
 	int j = 0;
-	for (int i = 0; i < strlen(byte_str); i++)
+	long i;
+	for (i = 0; i < (*original_size); i++)
 	{
 		count_b_t *temp = count_byte(tree, byte_str[i], 1, 0);
 		if(temp)
@@ -325,4 +338,19 @@ void generate_codes(huff_node *node, huff_dict *dict, int level)
 		dict->length[get_byte(node)] = level;
 		dict->freq[get_byte(node)] = get_frequency(node);
     }
+}
+
+int calc_trash_size(huff_dict *dict)
+{
+	int i, bits_count = 0;
+
+	for(i = 0; i < 256; i++)
+	{
+		if(dict->length[i] > 0)
+		{
+			bits_count += dict->freq[i] * dict->length[i];
+		}
+	}
+
+	return 8 - (bits_count % 8);
 }
