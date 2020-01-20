@@ -354,12 +354,21 @@ int* make_new_freq_arr()
 	}
 }
 
+/*
+	Cria um array e uma arvore vazias, e itera pelo byte_str.
+	Para cada byte, se faz a checagem na arvore, a frequencia
+	eh atualizada, e adicionada no array de frequencias. 
+
+	O array eh um array simples de inteiros iniciado com todas as
+	posicoes iguais a 0. Ele funciona como uma hash, ou seja, no
+	na posicao que eh igual ao valor de um byte, eh encontrada a
+	frequencia desse byte.
+*/
 int* make_count_arr(u_char *byte_str, long *original_size)
 {
 	b_tree* tree = make_new_b_tree();
 	int *freq_arr = make_new_freq_arr();
 
-	int j = 0;
 	long i;
 	for (i = 0; i < (*original_size); i++)
 	{
@@ -383,7 +392,7 @@ int* make_count_arr(u_char *byte_str, long *original_size)
 	A funcao funciona por que numa arvore binaria, o caminho da raiz para
 	uma folha eh unico, e num arvore de altura 8, temos 255 folhas, ou seja
 	uma para cada possivel byte. Dessa forma temos uma checagem constante 
-	em O(8).
+	em O(8)
 */
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i)
 {
