@@ -54,6 +54,9 @@ void init_huff_dict(huff_dict *dict);
 huff_dict* make_huff_dict();
 void generate_codes(huff_node *node, huff_dict *dict, int pos);
 
+b_tree* make_new_b_tree();
+int* make_new_freq_arr();
+
 count_b_t* new_count_b(u_char byte, int freq);
 int* make_count_arr(u_char *byte_str, long *original_size);
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i);
@@ -341,6 +344,7 @@ b_tree* make_new_b_tree()
 	{
 		tree->arr[i] = NULL;
 	}
+	return tree;
 }
 
 //cria e inicia um array com todos os indices 0
@@ -352,12 +356,14 @@ int* make_new_freq_arr()
 	{
 		freq_arr[i] = 0;
 	}
+
+	return freq_arr;
 }
 
 /*
 	Cria um array e uma arvore vazias, e itera pelo byte_str.
 	Para cada byte, se faz a checagem na arvore, a frequencia
-	eh atualizada, e adicionada no array de frequencias. 
+	eh atualizada no array de frequencias. 
 
 	O array eh um array simples de inteiros iniciado com todas as
 	posicoes iguais a 0. Ele funciona como uma hash, ou seja, no
