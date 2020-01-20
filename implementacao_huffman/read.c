@@ -357,7 +357,6 @@ int* make_new_freq_arr()
 int* make_count_arr(u_char *byte_str, long *original_size)
 {
 	b_tree* tree = make_new_b_tree();
-
 	int *freq_arr = make_new_freq_arr();
 
 	int j = 0;
@@ -370,6 +369,22 @@ int* make_count_arr(u_char *byte_str, long *original_size)
 	return freq_arr;
 }
 
+/*
+	Essa funcao conta os bytes usando uma arvores binaria completa
+	de altura 8. A arvore esta implementada em Heap.
+
+	Funcao recursiva, se o i-esimo bit de um byte for 1, ele vai pro
+	node da direita, se for 0 para o da esquerda. Ate que i = 8, oq quer
+	dizer que chegamos em uma folha. Ha entao uma checagem se a folha ja
+	foi visitada, se sim, entao apenas se incrementa a frequencia do node 
+	do tipo count_b_t, e o node eh retornado. Se nao um novo node eh criado
+	com frequencia 1, adicionado a arvore, e ai retornado. 
+
+	A funcao funciona por que numa arvore binaria, o caminho da raiz para
+	uma folha eh unico, e num arvore de altura 8, temos 255 folhas, ou seja
+	uma para cada possivel byte. Dessa forma temos uma checagem constante 
+	em O(8).
+*/
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i)
 {
 	if(i > 7)
