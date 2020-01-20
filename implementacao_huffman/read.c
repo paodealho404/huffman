@@ -122,6 +122,7 @@ int main()
 
     return 0;
 }
+
 void print_bytes(u_char *byte_str, long size)
 {
 	for (int i = 0; i < size; i++)
@@ -138,6 +139,33 @@ void print_bytes(u_char *byte_str, long size)
 	printf("\n");
 }
 
+/*
+	Essa funcao basicamente sao quatro variaveis: 
+
+		str_i: controla o index da byte_str;
+		code_i: vai controlar o index dos novos codigos dentro do dict;
+		bit: controla em qual bit estamos do novo byte sendo sobescrito;
+		b_index: controla o index do novo buffer criado, e q eh um argumento;
+
+	E dois loops, um while, e um for:
+	
+			O for percorre o byte sendo criado, ou seja, vai de 0 a 7, e em cada novo loop, 
+		se escreve um bit, incrementa code_i, para q na proxima iteracao estejamos no 
+		proximo bit do novo codigo, e tambem ha uma checagem para ver se o code_i 
+		ultrapassa o tamanho do novo codigo. Se essa checagem for verdade, incrementamos 
+		o valor de str_i, para q peguemos o proximo byte na byte_str, e pegamos o novo 
+		codigo desse byte no dict, code_i agora eh 0.
+
+			No while declaramos um byte vazio que sera escrito, e apos o for, ou seja, 
+		depois de esgotado todos os bits desse mesmo byte, ele eh adicionado
+		ao novo buffer e b_index eh incrementado. 
+
+		Algumas observacoes: 
+
+		code_i eh declarado antes pois mesmo se o loop de for acabar, pode ser que 
+		ainda precisemos escrever o resto do codigo no proximo byte. 
+
+*/
 void write_encoded_bytes(u_char *byte_str, u_char *buffer, huff_dict *dict, long buffer_size)
 {
 	int code_size = get_code_size(dict, byte_str[0]);
@@ -173,7 +201,7 @@ void write_encoded_bytes(u_char *byte_str, u_char *buffer, huff_dict *dict, long
 		b_index++;
 	}
 }
-
+//pega o tamanho que os novos codigos vao ocupar em bits
 long get_bytes_size(huff_dict *dict)
 {
 	long size = 0;
@@ -188,11 +216,13 @@ long get_bytes_size(huff_dict *dict)
 	return size;
 }
 
+//pega o tamanho do novo codigo de um byte
 int get_code_size(huff_dict *dict, u_char byte)
 {
 	return dict->length[byte];
 }
 
+//pega o array do novo codigo de um byte
 u_char* get_code(huff_dict *dict, u_char byte)
 {
 	return dict->codes[byte];
@@ -293,6 +323,7 @@ heap_t* make_huff_heap(u_char *byte_str, long *original_size)
 	return heap;
 }
 
+//retorna um novo count_b_t
 count_b_t* new_count_b(u_char byte, int freq)
 {
 	count_b_t *new = (count_b_t*) malloc(sizeof(count_b_t));
@@ -302,31 +333,39 @@ count_b_t* new_count_b(u_char byte, int freq)
 	return new;
 }
 
-int* make_count_arr(u_char *byte_str, long *original_size)
+//cria e inicializa um tipo b_tree
+b_tree* make_new_b_tree()
 {
 	b_tree* tree = (b_tree*)malloc(sizeof(b_tree));
 	for(int i = 0; i < MAX_B_TREE; i++)
 	{
 		tree->arr[i] = NULL;
 	}
+}
 
+//cria e inicia um array com todos os indices 0
+int* make_new_freq_arr()
+{
 	int *freq_arr = (int*)malloc(sizeof(int) * MAX_BYTE);
 
 	for (int i = 0; i < MAX_BYTE; i++)
 	{
 		freq_arr[i] = 0;
 	}
-	
+}
+
+int* make_count_arr(u_char *byte_str, long *original_size)
+{
+	b_tree* tree = make_new_b_tree();
+
+	int *freq_arr = make_new_freq_arr();
 
 	int j = 0;
 	long i;
 	for (i = 0; i < (*original_size); i++)
 	{
 		count_b_t *temp = count_byte(tree, byte_str[i], 1, 0);
-		if(temp)
-		{
-			freq_arr[temp->byte] = temp->freq;
-		}
+		freq_arr[temp->byte] = temp->freq;
 	}
 	return freq_arr;
 }
@@ -335,27 +374,23 @@ count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i)
 {
 	if(i > 7)
 	{
-		if(tree->arr[index] == NULL)
-		{
-			count_b_t* new = new_count_b(byte, 1);
-			tree->arr[index] = new;
-			return new;
-		}
-		else
+		if(tree->arr[index])
 		{
 			tree->arr[index]->freq++;
 			return tree->arr[index];
 		}
+
+		count_b_t* new = new_count_b(byte, 1);
+		tree->arr[index] = new;
+		return new;
 	}
 
 	if(is_bit_i_set(byte, i))
 	{
 		return count_byte(tree, byte, get_right_son(index), i+1);
 	}
-	else
-	{
-		return count_byte(tree, byte, get_left_son(index), i+1);
-	}
+
+	return count_byte(tree, byte, get_left_son(index), i+1);
 }
 
 huff_dict* make_huff_dict()
