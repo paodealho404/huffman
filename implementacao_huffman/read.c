@@ -158,7 +158,7 @@ void print_bytes(u_char *byte_str, long size)
 		iteracao ele checa se o valor de code[code_i] eh 1, se sim ele escreve no byte, se 
 		nao, ele nao faz nada. Code_i eh incrementado. Tem uma checagem para ver se code_i
 		ultrapassou o valor do novo codigo dentro do dict. Se sim, ele atualiza os valores
-		de code, code_size e code_i eh zerado. 
+		de code e code_size. Code_i eh zerado. 
 
 		No outro for, declaramos um byte vazio que sera escrito, e apos o for de dentro
 		acabar, colocamos o novo byte escrito dentro do buffer. O loop para quando b_index
