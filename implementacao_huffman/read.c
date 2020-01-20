@@ -5,6 +5,7 @@
 #include "heap.h"
 
 #define MAX_B_TREE 600
+#define DEBUG if(0)
 #define MAX_BYTE 255
 
 // tipo pra contar os bytes da arvore
@@ -37,6 +38,7 @@ struct _huffman_dict
 typedef struct _huffman_dict huff_dict;
 
 u_char* read_bytes(u_char *file_name, long *original_size);
+void print_bytes(u_char *byte_str, long size);
 
 int bb_search(u_char *byte_str, u_char byte);
 int search_byte(u_char *byte_str, u_char byte);
@@ -48,15 +50,18 @@ huff_node* pop_huff_heap(heap_t *heap);
 void push_huff_heap(heap_t *heap, huff_node *h_node);
 heap_t* make_huff_heap(u_char *byte_str, long *original_size);
 
-void sort_byte_str(u_char *byte_str);
-int cmp_char(const void *a, const void *b);
-
 void init_huff_dict(huff_dict *dict);
+huff_dict* make_huff_dict();
 void generate_codes(huff_node *node, huff_dict *dict, int pos);
 
 count_b_t* new_count_b(u_char byte, int freq);
 int* make_count_arr(u_char *byte_str, long *original_size);
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i);
+
+void write_encoded_bytes(u_char *byte_str, u_char *buffer, huff_dict *dict, long buffer_size);
+u_char* get_code(huff_dict *dict, u_char byte);
+long get_bytes_size(huff_dict *dict);
+int get_code_size(huff_dict *dict, u_char byte);
 
 int calc_trash_size(huff_dict *dict);
 
@@ -66,31 +71,44 @@ int main()
 	long original_size = 0;
 	u_char *bytes_arr;
 	bytes_arr = read_bytes("teste.txt", &original_size);
-	printf("%li\n", strlen(bytes_arr));
+
+	//printf("%li\n", strlen(bytes_arr));
+
 	heap_t *heap = make_huff_heap(bytes_arr, &original_size);
-	printf("works\n");
+
+	//printf("works\n");
 	
-	huff_dict dict;
-	init_huff_dict(&dict);
+	huff_dict *dict = make_huff_dict();
 
 	huff_node* huff_tree = build_huffman_tree(heap);
-	printf(" byte |  freq \n");
-	print_huff_pre_order(huff_tree);
 
-	printf("\n\n byte | code \n");
-	generate_codes(huff_tree, &dict, 0);
+	//printf(" byte |  freq \n");
+	//print_huff_pre_order(huff_tree);
+
+	//printf("\n\n byte | code \n");
+
+	generate_codes(huff_tree, dict, 0);
+
+	long size = get_bytes_size(dict);
+	long rest = size % 8;
+	size = size/8 + rest;
+	u_char *bytes_buffer = (u_char*)malloc(size);
+
+	write_encoded_bytes(bytes_arr, bytes_buffer, dict, size);
+	print_bytes(bytes_buffer, size);
+		
 	for(i = 0; i < 256; i++)
 	{
-		if(dict.length[i] > 0)
+		if(dict->length[i] > 0)
 		{
 			int j;
 			printf("%5d | ", i);
-			for(j = 0; j < dict.length[i]; j++)
-				printf("%d", dict.codes[i][j]);
+			for(j = 0; j < dict->length[i]; j++)
+				printf("%d", dict->codes[i][j]);
 			printf("\n");
 		}
 	}
-
+	/*
 	int trash_size = calc_trash_size(&dict);
 	printf("\ntrash size = %d\n", trash_size);
 
@@ -100,11 +118,85 @@ int main()
 
 	print_huff_heap(heap);
 	printf("\n");
-	
+	*/	
+
     return 0;
 }
+void print_bytes(u_char *byte_str, long size)
+{
+	for (int i = 0; i < size; i++)
+	{
+		u_char byte = byte_str[i];
+		for (int j = 0; j < 8; j++)
+		{
+			if(is_bit_i_set(byte, j)) printf("1");
+			else printf("0");
+		}
+		printf(" ");
+		
+	}
+	printf("\n");
+}
 
+void write_encoded_bytes(u_char *byte_str, u_char *buffer, huff_dict *dict, long buffer_size)
+{
+	int code_size = get_code_size(dict, byte_str[0]);
+	u_char *code = get_code(dict, 0);
 
+	int code_i = 0;
+
+	int str_i = 0;
+	int b_index = 0;
+
+	while(b_index < buffer_size)
+	{
+		u_char emp_byte = 0;
+
+		for (int bit = 0; bit < 8; bit++)
+		{
+			if(code[code_i])	
+			{
+				emp_byte = set_bit(emp_byte, bit);
+			}
+			code_i++;
+			if(code_i == code_size)
+			{
+				str_i++;
+
+				code_size = get_code_size(dict, byte_str[str_i]);
+				code = get_code(dict, byte_str[str_i]);
+				code_i = 0;
+			}
+		}
+
+		buffer[b_index] = emp_byte;
+		b_index++;
+	}
+}
+
+long get_bytes_size(huff_dict *dict)
+{
+	long size = 0;
+	for (int i = 0; i < 256; i++)
+	{
+		if(dict->length[i] != -1)
+		{
+		long temp = dict->freq[i] * dict->length[i];
+		size += temp;
+		}
+	}
+	return size;
+}
+
+int get_code_size(huff_dict *dict, u_char byte)
+{
+	return dict->length[byte];
+}
+
+u_char* get_code(huff_dict *dict, u_char byte)
+{
+	return dict->codes[byte];
+}
 
 void print_huff_heap(heap_t *heap)
 {
@@ -152,24 +244,6 @@ u_char* read_bytes(u_char *file_name, long *original_size)
 	return buffer;
 }
 
-/*
-	Usa uma funcao da stdlib pra ordenar um array de char.
-	A funcao qsort, ela precisa de uma funcao a parte pra 
-	comparar o tipo que voce quer ordenar, q no caso eh a cmp_char.
-
-	se a < b ela retorna "alguma coisa" < 0;
-	se a == b retorna 0;
-	se a > b retorna "alguma coisa" > 0;
-*/
-void sort_byte_str(u_char *byte_str)
-{
-	qsort(byte_str, strlen(byte_str), sizeof(u_char), cmp_char);
-}
-
-int cmp_char(const void *a, const void *b)
-{
-	return (*(u_char*)a - *(u_char*)b);
-}
 
 /*
 	Abstracao do pop_heap q retorna o tipo huff_node
@@ -284,26 +358,11 @@ count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i)
 	}
 }
 
-/*
-	busca bb q talvez alguem use
-*/
-int bb_search(u_char *byte_str, u_char byte)
+huff_dict* make_huff_dict()
 {
-	int begin = 0;
-	int end = strlen(byte_str) - 1;
-	int middle;
-
-	while (begin <= end) 
-	{
-		middle = (begin + end) / 2;
-
-		if (byte_str[middle] < byte) begin = middle + 1;
-
-		else if (byte_str[middle] > byte) end = middle - 1;
-
-		else return middle;
-	}
-	return -1;
+	huff_dict *new = (huff_dict*)malloc(sizeof(huff_dict));
+	init_huff_dict(new);
+	return new;
 }
 
 void init_huff_dict(huff_dict *dict)
