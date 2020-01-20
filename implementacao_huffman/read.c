@@ -143,25 +143,26 @@ void print_bytes(u_char *byte_str, long size)
 }
 
 /*
-	Essa funcao basicamente sao quatro variaveis: 
+	Essa funcao basicamente sao as variaveis: 
 
 		str_i: controla o index da byte_str;
 		code_i: vai controlar o index dos novos codigos dentro do dict;
 		bit: controla em qual bit estamos do novo byte sendo sobescrito;
 		b_index: controla o index do novo buffer criado, e q eh um argumento;
+		code: eh o nova compressao do byte gerado pelo huffman, esta dentro de
+		um array de u_char;
 
-	E dois loops, um while, e um for:
+	E dois loops:
 	
-			O for percorre o byte sendo criado, ou seja, vai de 0 a 7, e em cada novo loop, 
-		se escreve um bit, incrementa code_i, para q na proxima iteracao estejamos no 
-		proximo bit do novo codigo, e tambem ha uma checagem para ver se o code_i 
-		ultrapassa o tamanho do novo codigo. Se essa checagem for verdade, incrementamos 
-		o valor de str_i, para q peguemos o proximo byte na byte_str, e pegamos o novo 
-		codigo desse byte no dict, code_i agora eh 0.
+		O for de dentro percorre o byte sendo criado, ou seja, vai de 0 a 7. A cada nova
+		iteracao ele checa se o valor de code[code_i] eh 1, se sim ele escreve no byte, se 
+		nao, ele nao faz nada. Code_i eh incrementado. Tem uma checagem para ver se code_i
+		ultrapassou o valor do novo codigo dentro do dict. Se sim, ele atualiza os valores
+		de code, code_size e code_i eh zerado. 
 
-			No while declaramos um byte vazio que sera escrito, e apos o for, ou seja, 
-		depois de esgotado todos os bits desse mesmo byte, ele eh adicionado
-		ao novo buffer e b_index eh incrementado. 
+		No outro for, declaramos um byte vazio que sera escrito, e apos o for de dentro
+		acabar, colocamos o novo byte escrito dentro do buffer. O loop para quando b_index
+		ultrapassar o valor do buffer.
 
 		Algumas observacoes: 
 
@@ -172,14 +173,12 @@ void print_bytes(u_char *byte_str, long size)
 void write_encoded_bytes(u_char *byte_str, u_char *buffer, huff_dict *dict, long buffer_size)
 {
 	int code_size = get_code_size(dict, byte_str[0]);
-	u_char *code = get_code(dict, 0);
+	u_char *code = get_code(dict, byte_str[0]);
 
 	int code_i = 0;
-
 	int str_i = 0;
-	int b_index = 0;
 
-	while(b_index < buffer_size)
+	for(int b_index = 0; b_index < buffer_size; b_index++)
 	{
 		u_char emp_byte = 0;
 
@@ -190,6 +189,7 @@ void write_encoded_bytes(u_char *byte_str, u_char *buffer, huff_dict *dict, long
 				emp_byte = set_bit(emp_byte, bit);
 			}
 			code_i++;
+
 			if(code_i == code_size)
 			{
 				str_i++;
@@ -201,7 +201,6 @@ void write_encoded_bytes(u_char *byte_str, u_char *buffer, huff_dict *dict, long
 		}
 
 		buffer[b_index] = emp_byte;
-		b_index++;
 	}
 }
 //pega o tamanho que os novos codigos vao ocupar em bits
