@@ -51,13 +51,20 @@ huff_node* build_huffman_tree(heap_t *heap)
 {
 	huff_node *root;
 
+	if(get_size(heap) == 1)
+	{
+		huff_node *left = pop_huff_heap(heap);
+		root = new_huff_node('*', left->freq, left, NULL);
+		push_huff_heap(heap, root);
+	}
+
 	while(get_size(heap) != 1)
 	{
 		huff_node *left = pop_huff_heap(heap);
 		huff_node *right = pop_huff_heap(heap);
 		
 		root = new_huff_node('*', left->freq + right->freq, left, right);
-
+		
 		push_huff_heap(heap, root);
 	}
 

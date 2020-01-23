@@ -92,9 +92,20 @@ int main()
 
 	generate_codes(huff_tree, dict, 0);
 
-	long size = get_bytes_size(dict);
-	long rest = size % 8;
-	size = size/8 + rest;
+	long size = get_bytes_size(dict) / 8;
+	
+	int trash_size = calc_trash_size(dict);
+	printf("\ntrash size = %d\n", trash_size);
+	
+	if(size > 0)
+	{
+		if(trash_size > 0) size += 1;
+	}
+	else
+	{
+		size = 1;
+	}
+	
 	u_char *bytes_buffer = (u_char*)malloc(size);
 
 	write_encoded_bytes(bytes_arr, bytes_buffer, dict, size);
@@ -111,14 +122,11 @@ int main()
 			printf("\n");
 		}
 	}
-	/*
-	int trash_size = calc_trash_size(&dict);
-	printf("\ntrash size = %d\n", trash_size);
-
+	
 	long long int huff_tree_size = 0;
 	huffman_tree_size(huff_tree, &huff_tree_size);
 	printf("\nhuff tree size = %lli\n", huff_tree_size);
-
+	/*
 	print_huff_heap(heap);
 	printf("\n");
 	*/	
@@ -475,5 +483,7 @@ int calc_trash_size(huff_dict *dict)
 		}
 	}
 
-	return 8 - (bits_count % 8);
+	int rest = bits_count % 8;
+	
+	return (rest > 0) ? 8 - rest : 0;
 }
