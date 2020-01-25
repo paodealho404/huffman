@@ -37,7 +37,7 @@ struct _huffman_dict
 // tipo para os codigos de huffman
 typedef struct _huffman_dict huff_dict;
 
-u_char* read_bytes(u_char *file_name, long *original_size);
+FILE* open_file(char *file_name);
 void print_bytes(u_char *byte_str, long size);
 
 int bb_search(u_char *byte_str, u_char byte);
@@ -48,7 +48,7 @@ void print_huff_heap(heap_t *heap);
 
 huff_node* pop_huff_heap(heap_t *heap);
 void push_huff_heap(heap_t *heap, huff_node *h_node);
-heap_t* make_huff_heap(u_char *byte_str, long *original_size);
+heap_t* make_huff_heap(char *file_name, long *original_size);
 
 void init_huff_dict(huff_dict *dict);
 huff_dict* make_huff_dict();
@@ -59,7 +59,7 @@ b_tree* make_new_b_tree();
 int* make_new_freq_arr();
 
 count_b_t* new_count_b(u_char byte, int freq);
-int* make_count_arr(u_char *byte_str, long *original_size);
+int* make_count_arr(char *file_name, long *original_size);
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i);
 
 void write_header(int trash_size, int huff_tree_size, char* filename);
@@ -74,11 +74,11 @@ int main()
 	int i;
 	long original_size = 0;
 	u_char *bytes_arr;
-	bytes_arr = read_bytes("teste.txt", &original_size);
+	//bytes_arr = read_bytes("teste.txt", &original_size);
 
 	//printf("%li\n", strlen(bytes_arr));
 
-	heap_t *heap = make_huff_heap(bytes_arr, &original_size);
+	heap_t *heap = make_huff_heap("teste.txt", &original_size);
 
 	//printf("works\n");
 	
@@ -235,7 +235,7 @@ void print_huff_heap(heap_t *heap)
 	em bytes + 1, pra guardar o '\0'. E ai fread joga todos os
 	bytes do arquivo dentro de um array de char. Char tem 1 byte.
 */
-u_char* read_bytes(u_char *file_name, long *original_size)
+FILE* open_file(char *file_name)
 {
 	FILE *file_ptr;
 	file_ptr = fopen(file_name, "rb");
@@ -246,21 +246,7 @@ u_char* read_bytes(u_char *file_name, long *original_size)
 		return NULL;
 	}
 
-	u_char *buffer;
-	long file_length;
-
-	fseek(file_ptr, 0, SEEK_END);
-	file_length = ftell(file_ptr);
-	printf("tam = %li\n", file_length);
-	fseek(file_ptr, 0, SEEK_SET);
-
-	buffer = (u_char *) malloc((file_length + 1) * sizeof(u_char));
-	fread(buffer, file_length, 1, file_ptr);
-	fclose(file_ptr);
-
-	*original_size = file_length;
-
-	return buffer;
+	return file_ptr;
 }
 
 
@@ -296,10 +282,10 @@ void push_huff_heap(heap_t *heap, huff_node *h_node)
 	Retorna a heap ja pronta. Talvez precise ficar mais abstrato.
 */
 
-heap_t* make_huff_heap(u_char *byte_str, long *original_size)
+heap_t* make_huff_heap(char *file_name, long *original_size)
 {
 	heap_t *heap = make_heap();
-	int *freq_arr = make_count_arr(byte_str, original_size);
+	int *freq_arr = make_count_arr(file_name, original_size);
 
 	for(int i = 0; i < MAX_BYTE; i++)
 	{
@@ -356,17 +342,24 @@ int* make_new_freq_arr()
 	na posicao que eh igual ao valor de um byte, eh encontrada a
 	frequencia desse byte.
 */
-int* make_count_arr(u_char *byte_str, long *original_size)
+int* make_count_arr(char *file_name, long *original_size)
 {
+	FILE* file_ptr = open_file(file_name);
 	b_tree* tree = make_new_b_tree();
 	int *freq_arr = make_new_freq_arr();
 
 	long i;
-	for (i = 0; i < (*original_size); i++)
+	while (!feof(file_ptr))
 	{
-		count_b_t *temp = count_byte(tree, byte_str[i], 1, 0);
+		u_char byte;
+		fscanf(file_ptr, "%c", &byte);
+		count_b_t *temp = count_byte(tree, byte, 1, 0);
 		freq_arr[temp->byte] = temp->freq;
+
+		*original_size++;
 	}
+
+	fclose(file_ptr);
 	return freq_arr;
 }
 
