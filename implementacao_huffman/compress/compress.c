@@ -20,10 +20,15 @@ void compress(char* filename)
 	huffman_tree_size(huff_tree, &huff_tree_size);
 	printf("\nhuff tree size = %d\n", huff_tree_size);
 	
-	// TODO: funcao pra pegar o nome do arq original e por '.huff' no final
-	write_header(trash_size, huff_tree_size, "huff.txt");
-	save_huff_to_file(huff_tree, "huff.txt");
-	write_encoded_bytes(filename, dict, "huff.txt");
+	char compressed[406];
+	char ext[6] = ".huff";
+
+	strcpy(compressed, filename);
+	strcat(compressed, ext);
+
+	write_header(trash_size, huff_tree_size, compressed);
+	save_huff_to_file(huff_tree, compressed);
+	write_encoded_bytes(filename, dict, compressed);
 }
 
 

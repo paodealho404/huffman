@@ -8,18 +8,6 @@ struct _huffman_node
     huff_node *right;
 };
 
-int set_bit(unsigned char x, int i)
-{
-    unsigned char mask = 1 << i;
-    return mask | x;
-}
-
-int is_bit_i_set(unsigned char x, int i)
-{
-    unsigned mask = 1 << i;
-    return mask & x;
-}
-
 int is_huff_empty(huff_node *huff_tree)
 {
     return (huff_tree == NULL);
@@ -134,4 +122,30 @@ void save_huff_to_file(huff_node *node, char* filename)
 		save_huff_to_file(node->left, filename);
 		save_huff_to_file(node->right, filename);
 	}
+}
+
+huff_node* build_huff_tree_from_file(FILE *fp, huff_node *huff_tree, int *huff_tree_size)
+{
+    if(*huff_tree_size > 0)
+    {
+        u_char byte = fgetc(fp);
+		*huff_tree_size -= 1;
+
+        if(byte == '*')
+        {
+            huff_tree = new_huff_node('*', 0, NULL, NULL);
+            huff_tree->left = build_huff_tree_from_file(fp, huff_tree->left, huff_tree_size);
+			huff_tree->right = build_huff_tree_from_file(fp, huff_tree->right, huff_tree_size);
+        }
+        else
+        {
+            if(byte == '\\')
+			{
+				byte = fgetc(fp);
+				*huff_tree_size -= 1;
+			}
+			huff_tree = new_huff_node(byte, 0, NULL, NULL);
+        }
+    }
+	return huff_tree;
 }

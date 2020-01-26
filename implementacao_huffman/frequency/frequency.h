@@ -22,6 +22,5 @@ b_tree* make_new_b_tree();
 int* make_new_freq_arr();
 int* make_count_arr(char *file_name, long *original_size);
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i);
-FILE* open_file(char *file_name);
 
 #endif

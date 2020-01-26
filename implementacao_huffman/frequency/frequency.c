@@ -162,17 +162,3 @@ count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i)
 
 	return count_byte(tree, byte, get_left_son(index), i+1);
 }
-
-FILE* open_file(char *file_name)
-{
-	FILE *file_ptr;
-	file_ptr = fopen(file_name, "rb");
-
-	if(file_ptr == NULL)
-	{
-		printf("shit\n");
-		return NULL;
-	}
-
-	return file_ptr;
-}

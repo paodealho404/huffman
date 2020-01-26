@@ -33,24 +33,6 @@ typedef struct _huffman_node huff_node;
 int get_frequency(huff_node *node);
 
 /**
- * @brief Verifica o estado do bit de posição 'i' de um dado Byte
- * 
- * @param x 
- * @param i 
- * @return int 
- */
-int is_bit_i_set(unsigned char x, int i);
-
-/**
- * @brief Altera o estado 1 bit de um determinado Byte em uma posição 'i'
- * 
- * @param x 
- * @param i 
- * @return int 
- */
-int set_bit(unsigned char x, int i);
-
-/**
  * @brief Verifica se a árvore de Huffman informada (huff_tree) está vazia.
  * 
  * @param huff_tree 
@@ -164,5 +146,7 @@ u_char get_byte(huff_node *node);
  * @param filename 
  */
 void save_huff_to_file(huff_node *node, char* filename);
+
+huff_node* build_huff_tree_from_file(FILE *fp, huff_node *huff_tree, int *huff_tree_size);
 
 #endif
