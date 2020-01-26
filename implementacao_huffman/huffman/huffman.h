@@ -1,7 +1,14 @@
 /** 
  * HUFFMAN_TREE ADT
  */
- 
+
+#ifndef huffman_h 
+#define huffman_h
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "../heap/heap.h"
+#include "../util/util.h"
 
 //
 // Structs
@@ -12,29 +19,6 @@
  * 
  */
 typedef struct _huffman_node huff_node;
-
-/**
- * @brief Tipo padrão para nó de uma Heap.
- * 
- */
-typedef struct _p_node p_node_t;
-
-/**
- * @brief Tipo padrão para uma Heap.
- * 
- */
-typedef struct _heap heap_t;
-
-//
-// Auxiliary typedefs
-//
-
-/**
- * @brief Tipo padrão para abreviar unsigned char
- * 
- */
-typedef unsigned char u_char;
-
 
 //
 // Return - int function()
@@ -159,7 +143,7 @@ void push_huff_heap(heap_t *heap, huff_node *h_node);
  * @param node 
  * @param huff_tree_size 
  */
-void huffman_tree_size(huff_node *node, long long int *huff_tree_size);
+void huffman_tree_size(huff_node *node, int *huff_tree_size);
 
 //
 // Return - u_char function()
@@ -181,8 +165,4 @@ u_char get_byte(huff_node *node);
  */
 void save_huff_to_file(huff_node *node, char* filename);
 
-
-
-
-
-
+#endif

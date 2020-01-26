@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
 #include "heap.h"
-
-#define HEAP_MAX 1000
 
 /*
     Nó de prioridade, possui um ponteiro pra void e um inteiro

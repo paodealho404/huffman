@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "huffman.h"
-#include "heap.h"
+#include "huffman/huffman.h"
+#include "heap/heap.h"
+#include "util/util.h"
 
 #define MAX_B_TREE 600
 #define DEBUG if(0)
@@ -98,9 +99,9 @@ int main()
 	
 	print_huff_dict(dict);
 	
-	long long int huff_tree_size = 0;
+	int huff_tree_size = 0;
 	huffman_tree_size(huff_tree, &huff_tree_size);
-	printf("\nhuff tree size = %lli\n", huff_tree_size);
+	printf("\nhuff tree size = %d\n", huff_tree_size);
 	
 	// TODO: funcao pra pegar o nome do arq original e por '.huff' no final
 	write_header(trash_size, huff_tree_size, "huff.txt");

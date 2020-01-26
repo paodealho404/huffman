@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "huffman.h"
-#include "heap.h"
 
 struct _huffman_node
 {
@@ -103,7 +100,7 @@ huff_node* get_right_node(huff_node *node)
     return node->right;
 }
 
-void huffman_tree_size(huff_node *node, long long int *huff_tree_size)
+void huffman_tree_size(huff_node *node, int *huff_tree_size)
 {
 	if(node)
 	{
