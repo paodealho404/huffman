@@ -118,3 +118,23 @@ void huffman_tree_size(huff_node *node, long long int *huff_tree_size)
 		huffman_tree_size(node->right, huff_tree_size);
 	}
 }
+
+// imprime a huff tree em pre-ordem no arquivo comprimido.
+void save_huff_to_file(huff_node *node, char* filename)
+{
+	if(node)
+	{
+		FILE *fp = fopen(filename, "a");
+
+		if((node->byte == '*' || node->byte == '\\') && is_huff_leaf(node))
+		{
+			fputc('\\', fp);
+		}
+
+		fputc(node->byte, fp);
+		fclose(fp);
+
+		save_huff_to_file(node->left, filename);
+		save_huff_to_file(node->right, filename);
+	}
+}

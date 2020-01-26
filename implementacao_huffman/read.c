@@ -52,6 +52,7 @@ heap_t* make_huff_heap(u_char *byte_str, long *original_size);
 
 void init_huff_dict(huff_dict *dict);
 huff_dict* make_huff_dict();
+void print_huff_dict(huff_dict *dict);
 void generate_codes(huff_node *node, huff_dict *dict, int pos);
 
 b_tree* make_new_b_tree();
@@ -61,11 +62,11 @@ count_b_t* new_count_b(u_char byte, int freq);
 int* make_count_arr(u_char *byte_str, long *original_size);
 count_b_t* count_byte(b_tree *tree, u_char byte, int index, int i);
 
-void write_encoded_bytes(u_char *byte_str, u_char *buffer, huff_dict *dict, long buffer_size);
+void write_header(int trash_size, int huff_tree_size, char* filename);
+void write_encoded_bytes(char* filename_src, huff_dict *dict, char* filename_dest);
 u_char* get_code(huff_dict *dict, u_char byte);
 long get_bytes_size(huff_dict *dict);
 int get_code_size(huff_dict *dict, u_char byte);
-
 int calc_trash_size(huff_dict *dict);
 
 int main()
@@ -91,45 +92,34 @@ int main()
 	//printf("\n\n byte | code \n");
 
 	generate_codes(huff_tree, dict, 0);
-
-	long size = get_bytes_size(dict) / 8;
 	
 	int trash_size = calc_trash_size(dict);
 	printf("\ntrash size = %d\n", trash_size);
 	
-	if(size > 0)
-	{
-		if(trash_size > 0) size += 1;
-	}
-	else
-	{
-		size = 1;
-	}
-	
-	u_char *bytes_buffer = (u_char*)malloc(size);
-
-	write_encoded_bytes(bytes_arr, bytes_buffer, dict, size);
-	print_bytes(bytes_buffer, size);
-		
-	for(i = 0; i < 256; i++)
-	{
-		if(dict->length[i] > 0)
-		{
-			int j;
-			printf("%5d | ", i);
-			for(j = 0; j < dict->length[i]; j++)
-				printf("%d", dict->codes[i][j]);
-			printf("\n");
-		}
-	}
+	print_huff_dict(dict);
 	
 	long long int huff_tree_size = 0;
 	huffman_tree_size(huff_tree, &huff_tree_size);
 	printf("\nhuff tree size = %lli\n", huff_tree_size);
-	/*
-	print_huff_heap(heap);
-	printf("\n");
-	*/	
+	
+	// TODO: funcao pra pegar o nome do arq original e por '.huff' no final
+	write_header(trash_size, huff_tree_size, "huff.txt");
+	save_huff_to_file(huff_tree, "huff.txt");
+	write_encoded_bytes("teste.txt", dict, "huff.txt");
+
+	// spoiler da leitura do header
+	// FILE *fp = fopen("huff.txt", "rb");
+	// u_char c[2];
+	// c[1] = fgetc(fp);
+	// c[0] = fgetc(fp);
+	// fclose(fp);
+
+	// c[1] = c[1] << 3;
+	// c[1] = c[1] >> 3;
+
+	// int teste = 0;
+	// memcpy(&teste, c, 2);
+	// printf("\n%d\n", teste);
 
     return 0;
 }
@@ -151,66 +141,55 @@ void print_bytes(u_char *byte_str, long size)
 }
 
 /*
-	Essa funcao basicamente sao as variaveis: 
+	vai lendo byte por byte até o final do arquivo original (src).
+	pra cada byte lido do original, pega o huff code dele e começa a
+	preencher um novo byte. quando um byte novo eh completado, ele eh adicionado
+	ao arquivo comprimido (dest). ao termino do loop de leitura do src, caso ainda
+	exista um novo byte nao completo, ele eh adicionado ao dest.
 
-		str_i: controla o index da byte_str;
-		code_i: vai controlar o index dos novos codigos dentro do dict;
-		bit: controla em qual bit estamos do novo byte sendo sobescrito;
-		b_index: controla o index do novo buffer criado, e q eh um argumento;
-		code: eh o nova compressao do byte gerado pelo huffman, esta dentro de
-		um array de u_char;
-
-	E dois loops:
-	
-		O for de dentro percorre o byte sendo criado, ou seja, vai de 0 a 7. A cada nova
-		iteracao ele checa se o valor de code[code_i] eh 1, se sim ele escreve no byte, se 
-		nao, ele nao faz nada. Code_i eh incrementado. Tem uma checagem para ver se code_i
-		ultrapassou o valor do novo codigo dentro do dict. Se sim, ele atualiza os valores
-		de code e code_size. Code_i eh zerado. 
-
-		No outro for, declaramos um byte vazio que sera escrito, e apos o for de dentro
-		acabar, colocamos o novo byte escrito dentro do buffer. O loop para quando b_index
-		ultrapassar o valor do buffer.
-
-		Algumas observacoes: 
-
-		code_i eh declarado antes pois mesmo se o loop de for acabar, pode ser que 
-		ainda precisemos escrever o resto do codigo no proximo byte. 
-
+	ps: dessa vez o contador de bits precisou ir de 7 a 0 para contar da esquerda
+	pra direita.
 */
-void write_encoded_bytes(u_char *byte_str, u_char *buffer, huff_dict *dict, long buffer_size)
+void write_encoded_bytes(char* filename_src, huff_dict *dict, char* filename_dest)
 {
-	int code_size = get_code_size(dict, byte_str[0]);
-	u_char *code = get_code(dict, byte_str[0]);
+	FILE *fp_src = fopen(filename_src, "r+");
+	FILE *fp_dest = fopen(filename_dest, "a");
+	
+	u_char read_byte, new_byte = 0;
+	int code_size = 0, bit_count = 7, code_i = 0;
+	u_char *code;
 
-	int code_i = 0;
-	int str_i = 0;
-
-	for(int b_index = 0; b_index < buffer_size; b_index++)
+	while(fscanf(fp_src, "%c", &read_byte) != EOF)
 	{
-		u_char emp_byte = 0;
+		code_size = get_code_size(dict, read_byte);
+		code = get_code(dict, read_byte);
 
-		for (int bit = 0; bit < 8; bit++)
+		for(code_i = 0; code_i < code_size; code_i++)
 		{
 			if(code[code_i])	
 			{
-				emp_byte = set_bit(emp_byte, bit);
+				new_byte = set_bit(new_byte, bit_count);
 			}
-			code_i++;
+			bit_count--;
 
-			if(code_i == code_size)
+			if(bit_count < 0)
 			{
-				str_i++;
-
-				code_size = get_code_size(dict, byte_str[str_i]);
-				code = get_code(dict, byte_str[str_i]);
-				code_i = 0;
+				fputc(new_byte, fp_dest);
+				new_byte = 0;
+				bit_count = 7;
 			}
 		}
-
-		buffer[b_index] = emp_byte;
 	}
+
+	if(bit_count < 7)
+	{
+		fputc(new_byte, fp_dest);
+	}
+
+	fclose(fp_dest);
+	fclose(fp_src);
 }
+
 //pega o tamanho que os novos codigos vao ocupar em bits
 long get_bytes_size(huff_dict *dict)
 {
@@ -442,8 +421,23 @@ void init_huff_dict(huff_dict *dict)
 	int i;
 	for(i = 0; i < 256; i++)
 	{
-		dict->length[i] = -1;
+		dict->length[i] = 0;
 		dict->path_bits[i] = 0;
+	}
+}
+
+void print_huff_dict(huff_dict *dict)
+{
+	for(int i = 0; i < 256; i++)
+	{
+		if(dict->length[i] > 0)
+		{
+			int j;
+			printf("%5d | ", i);
+			for(j = 0; j < dict->length[i]; j++)
+				printf("%d", dict->codes[i][j]);
+			printf("\n");
+		}
 	}
 }
 
@@ -486,4 +480,46 @@ int calc_trash_size(huff_dict *dict)
 	int rest = bits_count % 8;
 	
 	return (rest > 0) ? 8 - rest : 0;
+}
+
+
+/*
+	função pra escrever o cabeçalho do arquivo comprimido;
+	o cabeçalho consiste de 2 bytes, sendo 3 bits para o trash size e
+	os 13 restantes para o tamanho da arvore.
+
+	como inteiros possuem 4 bytes e chars apenas 1 byte, ao atribuirmos um valor
+	do tipo int para uma variavel u_char apenas o primeiro byte (dir. para esq.) é copiado.
+	exempĺo:
+	int n = 263; // bits de n: 00000000 00000000 00000001 00000111
+	char c = n; // bits de c: 00000111
+
+	por isso, eh preciso fazer shift bit de 8 bits para a direita no valor tree size,
+	e atribui-los ao primeiro byte do header. para o segundo byte do header eh so atribuir
+	normalmente que teremos os bits desejados.
+
+	para o lixo, temos que fazer shift bit para esquerda de 5 bits, para assim os 3 bits de
+	importancia ficarem no inicio do byte. ex: 
+	int trash_size = 5; // 00000101
+	trash_size << 5; // 10100000
+	
+	para escrever os bits do lixo junto dos bits da tree size de uma vez só no header, fazemos
+	a operação bit-wise OR. ex:
+	00000111 // bits do tree size
+	10100000 // bits do trash size
+	10100111 // resultado do OR
+
+ */
+void write_header(int trash_size, int huff_tree_size, char* filename)
+{
+	u_char byte1, byte2;
+	FILE *fp = fopen(filename, "wb");
+
+	byte1 = trash_size << 5 | huff_tree_size >> 8;
+	byte2 = huff_tree_size;
+
+	fputc(byte1, fp);
+	fputc(byte2, fp);
+
+	fclose(fp);
 }

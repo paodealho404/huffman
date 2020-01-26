@@ -173,6 +173,14 @@ void huffman_tree_size(huff_node *node, long long int *huff_tree_size);
  */
 u_char get_byte(huff_node *node);
 
+/**
+ * @brief Salva a Huffman Tree (node) em pre-ordem no arquivo indicado por filename.
+ * 
+ * @param node 
+ * @param filename 
+ */
+void save_huff_to_file(huff_node *node, char* filename);
+
 
 
 
