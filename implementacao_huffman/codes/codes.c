@@ -5,7 +5,7 @@ struct _huffman_dict
 	u_char codes[256][256];
 	unsigned short path_bits[256];
 	int length[256];
-	int freq[256];
+	ulli freq[256];
 };
 
 huff_dict* make_huff_dict()
@@ -33,7 +33,7 @@ void print_huff_dict(huff_dict *dict)
 		if(dict->length[i] > 0)
 		{
 			int j;
-			printf("%5d | %5d | ", i, dict->freq[i]);
+			printf("%d | %lld | ", i, dict->freq[i]);
 			for(j = 0; j < dict->length[i]; j++)
 				printf("%d", dict->codes[i][j]);
 			printf("\n");
@@ -77,9 +77,10 @@ u_char* get_code(huff_dict *dict, u_char byte)
 	return dict->codes[byte];
 }
 
-int calc_trash_size(huff_dict *dict)
+short calc_trash_size(huff_dict *dict)
 {
-	int i, bits_count = 0;
+	int i;
+	ulli bits_count = 0;
 
 	for(i = 0; i < 256; i++)
 	{
@@ -89,7 +90,7 @@ int calc_trash_size(huff_dict *dict)
 		}
 	}
 
-	int rest = bits_count % 8;
+	short rest = bits_count % 8;
 	
 	return (rest > 0) ? 8 - rest : 0;
 }

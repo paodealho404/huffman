@@ -19,7 +19,7 @@ FILE* open_file(char *file_name)
 
 	if(file_ptr == NULL)
 	{
-		printf("shit\n");
+		printf("Error reading file\n");
 		return NULL;
 	}
 

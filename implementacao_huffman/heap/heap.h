@@ -9,8 +9,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include "../util/util.h"
 
-#define HEAP_MAX 1000
+#define HEAP_MAX 257
 
 //
 //Structs
@@ -41,7 +42,7 @@ typedef struct _heap heap_t;
  * @param p 
  * @param prio 
  */
-void push_heap(heap_t *heap, void *p, int prio);
+void push_heap(heap_t *heap, void *p, ulli prio);
 
 /**
  * @brief Altera a posição de dois nós informados ( (p_1) e (p_2) ).

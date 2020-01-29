@@ -20,6 +20,6 @@ int get_code_size(huff_dict *dict, u_char byte);
 
 u_char* get_code(huff_dict *dict, u_char byte);
 
-int calc_trash_size(huff_dict *dict);
+short calc_trash_size(huff_dict *dict);
 
 #endif

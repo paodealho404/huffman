@@ -1,9 +1,10 @@
 #include "huffman.h"
+#include "../frequency/frequency.h"
 
 struct _huffman_node
 {
     u_char byte;
-    int freq;
+    ulli freq;
     huff_node *left;
     huff_node *right;
 };
@@ -18,7 +19,7 @@ int is_huff_leaf(huff_node *node)
     return (is_huff_empty(node->left) && is_huff_empty(node->right));
 }
 
-huff_node* new_huff_node(u_char byte, int freq, 
+huff_node* new_huff_node(u_char byte, ulli freq, 
 						huff_node *left, huff_node *right)
 {
 	huff_node *new_node = (huff_node*)malloc(sizeof(huff_node));
@@ -62,7 +63,7 @@ void print_huff_pre_order(huff_node *root)
 {
     if(!is_huff_empty(root))
 	{
-		printf("%5u | %5d \n", root->byte, root->freq);
+		printf("%5u | %5lld \n", root->byte, root->freq);
 		print_huff_pre_order(root->left);
 		print_huff_pre_order(root->right);
 	}
@@ -73,7 +74,7 @@ u_char get_byte(huff_node *node)
     return node->byte;
 }
 
-int get_frequency(huff_node *node)
+ulli get_frequency(huff_node *node)
 {
     return node->freq;
 }
@@ -88,7 +89,7 @@ huff_node* get_right_node(huff_node *node)
     return node->right;
 }
 
-void huffman_tree_size(huff_node *node, int *huff_tree_size)
+void huffman_tree_size(huff_node *node, short *huff_tree_size)
 {
 	if(node)
 	{
@@ -124,7 +125,7 @@ void save_huff_to_file(huff_node *node, char* filename)
 	}
 }
 
-huff_node* build_huff_tree_from_file(FILE *fp, huff_node *huff_tree, int *huff_tree_size)
+huff_node* build_huff_tree_from_file(FILE *fp, huff_node *huff_tree, short *huff_tree_size)
 {
     if(*huff_tree_size > 0)
     {

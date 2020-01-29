@@ -4,7 +4,7 @@
 struct _count_b
 {
 	u_char byte;
-	int freq;
+	ulli freq;
 };
 
 // arvore pra contar os bytes
@@ -45,10 +45,10 @@ void push_huff_heap(heap_t *heap, huff_node *h_node)
 	Retorna a heap ja pronta. Talvez precise ficar mais abstrato.
 */
 
-heap_t* make_huff_heap(char *file_name, long *original_size)
+heap_t* make_huff_heap(char *file_name, ulli *original_size)
 {
 	heap_t *heap = make_heap();
-	int *freq_arr = make_count_arr(file_name, original_size);
+	ulli *freq_arr = make_count_arr(file_name, original_size);
 
 	for(int i = 0; i < MAX_BYTE; i++)
 	{
@@ -62,7 +62,7 @@ heap_t* make_huff_heap(char *file_name, long *original_size)
 }
 
 //retorna um novo count_b_t
-count_b_t* new_count_b(u_char byte, int freq)
+count_b_t* new_count_b(u_char byte, ulli freq)
 {
 	count_b_t *new = (count_b_t*) malloc(sizeof(count_b_t));
 
@@ -83,9 +83,9 @@ b_tree* make_new_b_tree()
 }
 
 //cria e inicia um array com todos os indices 0
-int* make_new_freq_arr()
+ulli* make_new_freq_arr()
 {
-	int *freq_arr = (int*)malloc(sizeof(int) * MAX_BYTE);
+	ulli *freq_arr = (ulli*)malloc(sizeof(ulli) * MAX_BYTE);
 
 	for (int i = 0; i < MAX_BYTE; i++)
 	{
@@ -105,11 +105,11 @@ int* make_new_freq_arr()
 	na posicao que eh igual ao valor de um byte, eh encontrada a
 	frequencia desse byte.
 */
-int* make_count_arr(char *file_name, long *original_size)
+ulli* make_count_arr(char *file_name, ulli *original_size)
 {
 	FILE* file_ptr = open_file(file_name);
 	b_tree* tree = make_new_b_tree();
-	int *freq_arr = make_new_freq_arr();
+	ulli *freq_arr = make_new_freq_arr();
 
 	u_char byte;
 	while(fscanf(file_ptr, "%c", &byte) != EOF)

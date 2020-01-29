@@ -7,7 +7,7 @@
 struct _p_node
 {
     void *item;
-    int prio;
+    ulli prio;
 };
 
 /*
@@ -55,10 +55,10 @@ void print_heap(heap_t *heap)
     int i;
     for(i = 1; i < heap->size; i++)
     {
-        printf(" %d |", heap->arr[i]->prio);
+        printf(" %lld |", heap->arr[i]->prio);
         
     }
-    printf(" %d\n", heap->arr[heap->size]->prio);
+    printf(" %lld\n", heap->arr[heap->size]->prio);
 }
 
 /*
@@ -76,7 +76,7 @@ p_node_t* cp_node(p_node_t *node)
     node com os elementos que estao no argumento, e diz que
     o ultimo elemento da heap e igual a ele. Faz um min_heapify.
 */
-void push_heap(heap_t *heap, void *p, int prio)
+void push_heap(heap_t *heap, void *p, ulli prio)
 {
     heap->size++; 
 

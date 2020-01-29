@@ -2,7 +2,7 @@
 
 void decompress(char *filename)
 {    
-    int trash_size = 0, huff_tree_size = 0;
+    short trash_size = 0, huff_tree_size = 0;
     u_char header[2];
 
     FILE *fp = fopen(filename, "rb");
@@ -23,34 +23,32 @@ void decompress(char *filename)
     fclose(fp);
 }
 
-void read_header(FILE *fp, u_char *header, int *trash_size, int *huff_tree_size)
+void read_header(FILE *fp, u_char *header, short *trash_size, short *huff_tree_size)
 {
     header[1] = fgetc(fp);
 	header[0] = fgetc(fp);
 
     u_char tr = header[1] >> 5;
     memcpy(trash_size, &tr, 1);
-    printf("\n%d\n", (*trash_size));
+    //printf("\n%d\n", (*trash_size));
 
 	header[1] = header[1] << 3;
 	header[1] = header[1] >> 3;
 
 	memcpy(huff_tree_size, header, 2);
-	printf("\n%d\n", (*huff_tree_size));
+	//printf("\n%d\n", (*huff_tree_size));
 }
 
-void write_decompressed_bytes(FILE *compressed, huff_node *huff_tree, int trash_size, FILE *decompressed)
+void write_decompressed_bytes(FILE *compressed, huff_node *huff_tree, short trash_size, FILE *decompressed)
 {
     huff_node *curr_node = huff_tree;
     u_char byte, next;
-    int bit_count = 7;
+    short bit_count = 7;
 
     byte = fgetc(compressed);
     while(!feof(compressed))
     {
         next = fgetc(compressed);
-        printf("b - "); print_byte(byte);
-        printf("n - "); print_byte(next);
 
         if(!feof(compressed))
         {

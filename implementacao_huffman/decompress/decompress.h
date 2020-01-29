@@ -8,8 +8,8 @@
 
 void decompress(char *filename);
 
-void read_header(FILE *fp, u_char *header, int *trash_size, int *huff_tree_size);
+void read_header(FILE *fp, u_char *header, short *trash_size, short *huff_tree_size);
 
-void write_decompressed_bytes(FILE *compressed, huff_node *huff_tree, int trash_size, FILE *decompressed);
+void write_decompressed_bytes(FILE *compressed, huff_node *huff_tree, short trash_size, FILE *decompressed);
 
 #endif

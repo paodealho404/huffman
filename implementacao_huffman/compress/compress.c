@@ -3,7 +3,7 @@
 void compress(char* filename)
 {
     int i;
-	long original_size = 0;
+	ulli original_size = 0;
 
 	heap_t *heap = make_huff_heap(filename, &original_size);
 	huff_node* huff_tree = build_huffman_tree(heap);
@@ -11,14 +11,14 @@ void compress(char* filename)
     huff_dict *dict = make_huff_dict();
 	generate_codes(huff_tree, dict, 0);
 	
-	int trash_size = calc_trash_size(dict);
-	printf("\ntrash size = %d\n", trash_size);
+	short trash_size = calc_trash_size(dict);
+	//printf("trash size = %d\n", trash_size);
 	
-	print_huff_dict(dict);
+	//print_huff_dict(dict);
 	
-	int huff_tree_size = 0;
+	short huff_tree_size = 0;
 	huffman_tree_size(huff_tree, &huff_tree_size);
-	printf("\nhuff tree size = %d\n", huff_tree_size);
+	//printf("huff tree size = %d\n", huff_tree_size);
 	
 	char compressed[406];
 	char ext[6] = ".huff";
@@ -59,7 +59,7 @@ void compress(char* filename)
 	10100111 // resultado do OR
 
  */
-void write_header(int trash_size, int huff_tree_size, char* filename)
+void write_header(short trash_size, short huff_tree_size, char* filename)
 {
 	u_char byte1, byte2;
 	FILE *fp = fopen(filename, "wb");

@@ -11,7 +11,7 @@
 
 void compress(char* filename);
 
-void write_header(int trash_size, int huff_tree_size, char* filename);
+void write_header(short trash_size, short huff_tree_size, char* filename);
 
 void write_encoded_bytes(char* filename_src, huff_dict *dict, char* filename_dest);
 
