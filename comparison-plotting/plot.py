@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 # %%
 def read_file(fname):
-    data = np.genfromtxt(fname, dtype=int, names=['n', 'abb_l', 'abb_r', 'avl_l', 'avl_r'])
+    data = np.genfromtxt(fname, dtype=int, names=['n', 'abb', 'avl'])
     return data
 
 
@@ -25,8 +25,8 @@ fig = plt.figure(figsize=[10,7])
 
 ax = plt.subplot()
 
-ax.plot(data['n'], data['abb_r'], 'o-', label="ABB", lineWidth=2)
-ax.plot(data['n'], data['avl_r'], 'o-', label="AVL", lineWidth=2)
+ax.plot(data['n'], data['abb'], 'o-', label="ABB", lineWidth=2)
+ax.plot(data['n'], data['avl'], 'o-', label="AVL", lineWidth=2)
 ax.legend()
 
 ax.set(xlabel='Número Procurado', ylabel='Quantidade de Comparações', title="ABB vs. AVL")
