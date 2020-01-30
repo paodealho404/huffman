@@ -1,18 +1,5 @@
 #include "frequency.h"
 
-// tipo pra contar os bytes da arvore
-struct _count_b
-{
-	u_char byte;
-	ulli freq;
-};
-
-// arvore pra contar os bytes
-struct _count_b_tree
-{
-	count_b_t* arr[MAX_B_TREE];
-};
-
 /*
 	Abstracao do pop_heap q retorna o tipo huff_node
 */
