@@ -10,7 +10,9 @@
 #define MAX_B_TREE 600
 #define MAX_BYTE 256
 
-
+//
+// Return - huff_node* function()
+//
 /**
  * @brief Retorna um nó de uma Árvore de Huffman a partir de uma Heap informada (heap).
  * 
@@ -18,6 +20,11 @@
  * @return huff_node* 
  */
 huff_node* pop_huff_heap(heap_t *heap);
+
+
+//
+// Return - void function()
+//
 
 /**
  * @brief Insere um nó informado de uma Árvore de Huffman (h_node) em uma Heap informada (heap).
@@ -27,8 +34,41 @@ huff_node* pop_huff_heap(heap_t *heap);
  */
 void push_huff_heap(heap_t *heap, huff_node *h_node);
 
+
+//
+// Return - heap_t* function()
+//
+
+/**
+ * @brief Cria uma Heap de nós de frequência com base em um arquivo informado (file_name) e altera o tamanho para 
+ * o tamanho original do arquivo
+ * 
+ * @param file_name 
+ * @param original_size 
+ * @return heap_t* 
+ */
 heap_t* make_huff_heap(char *file_name, ulli *original_size);
+
+
+//
+// Return - ulli* function()
+//
+
+/**
+ * @brief Cria um array de frequência para os bytes.
+ * 
+ * @return ulli* 
+ */
 ulli* make_new_freq_arr();
+
+/**
+ * @brief Contabiliza os bytes de um determinado arquivo (file_name) e o tamanho em bytes 
+ * (original_size).
+ * 
+ * @param file_name 
+ * @param original_size 
+ * @return ulli* 
+ */
 ulli* make_count_arr(char *file_name, ulli *original_size);
 
 #endif

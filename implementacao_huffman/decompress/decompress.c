@@ -52,7 +52,7 @@ void write_decompressed_bytes(FILE *compressed, huff_node *huff_tree, short tras
 
         if(!feof(compressed))
         {
-            printf("if\n");
+            //printf("if\n");
             while(bit_count >= 0)
             {
                 if(is_huff_leaf(curr_node))
@@ -74,7 +74,7 @@ void write_decompressed_bytes(FILE *compressed, huff_node *huff_tree, short tras
         }
         else
         {
-            printf("else\n");
+            //printf("else\n");
             while(bit_count >= (trash_size - 1))
             {
                 if(is_huff_leaf(curr_node))

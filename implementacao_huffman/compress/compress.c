@@ -4,10 +4,12 @@ void compress(char* filename)
 {
     int i;
 	ulli original_size = 0;
+	
+	printf("\nFile status: Reading file...\n");
 
 	heap_t *heap = make_huff_heap(filename, &original_size);
 	huff_node* huff_tree = build_huffman_tree(heap);
-
+	
     huff_dict *dict = make_huff_dict();
 	generate_codes(huff_tree, dict, 0);
 	
@@ -25,10 +27,12 @@ void compress(char* filename)
 
 	strcpy(compressed, filename);
 	strcat(compressed, ext);
-
+	printf("\nFile status: Processing...\n");
 	write_header(trash_size, huff_tree_size, compressed);
 	save_huff_to_file(huff_tree, compressed);
 	write_encoded_bytes(filename, dict, compressed);
+	printf("\nFile status: Compressed!!\n");
+	printf("Compressed file: %s\n\n", compressed);
 }
 
 

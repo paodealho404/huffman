@@ -156,7 +156,7 @@ p_node_t* pop_heap(heap_t *heap);
 heap_t* make_heap();
 
 /**
- * @brief retorna o item de um nó da heap
+ * @brief Retorna o item de um nó da Heap.
  * 
  * @param node 
  * @return void* 

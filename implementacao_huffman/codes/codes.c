@@ -65,7 +65,6 @@ void generate_codes(huff_node *node, huff_dict *dict, int level)
     }
 }
 
-//pega o tamanho do novo codigo de um byte
 int get_code_size(huff_dict *dict, u_char byte)
 {
 	return dict->length[byte];
