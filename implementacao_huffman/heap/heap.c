@@ -1,5 +1,5 @@
 #include "heap.h"
-
+#include "../huffman/huffman.h"
 /*
     Nó de prioridade, possui um ponteiro pra void e um inteiro
     referente a prioridade do nó.
@@ -41,9 +41,11 @@ p_node_t* pop_heap(heap_t *heap)
 void print_heap(heap_t *heap)
 {
     int i;
-    for(i = 1; i < heap->size; i++)
+    huff_node *aux = NULL;
+    for(i = 1; i <= heap->size; i++)
     {
-        printf(" %lld |", heap->arr[i]->prio);
+        aux = (huff_node *) heap->arr[i];
+        printf(" %lld | %c", heap->arr[i]->prio, (int)aux->byte);
         
     }
     printf(" %lld\n", heap->arr[heap->size]->prio);

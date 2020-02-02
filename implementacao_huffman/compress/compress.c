@@ -16,7 +16,7 @@ void compress(char* filename)
 	short trash_size = calc_trash_size(dict);
 	//printf("trash size = %d\n", trash_size);
 	
-	//print_huff_dict(dict);
+	print_huff_dict(dict);
 	
 	short huff_tree_size = 0;
 	huffman_tree_size(huff_tree, &huff_tree_size);

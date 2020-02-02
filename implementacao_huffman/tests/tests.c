@@ -3,6 +3,7 @@
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 #include <CUnit/MyMem.h>
+#include <stdio.h>
 
 heap_t *NEW_HEAP = NULL;
 huff_node *NEW_HUFF_ROOT = NULL;
@@ -77,13 +78,39 @@ void test_pop_heap()
    AUX_NODE = (huff_node *)pop_heap(NEW_HEAP);
    CU_ASSERT_PTR_NULL(AUX_NODE);
 }
-void test_search_huff_tree()
-{
-    printf("teste1");
-}
 void test_create_huffman_tree()
 {
-    printf("teste3");
+    NEW_HUFF_ROOT = NULL;
+    CU_ASSERT_PTR_NULL(NEW_HUFF_ROOT);
+}
+void test_generate_huffman_tree()
+{
+    long long int frequency = 10000;
+    push_heap(NEW_HEAP, new_huff_node('A', frequency, NULL, NULL), frequency);
+    print_heap(NEW_HEAP);
+    frequency = 9000;
+    push_heap(NEW_HEAP, new_huff_node('B', frequency, NULL, NULL), frequency);
+    print_heap(NEW_HEAP);
+    frequency = 8000;
+    push_heap(NEW_HEAP, new_huff_node('C', frequency, NULL, NULL), frequency);
+    print_heap(NEW_HEAP);
+    frequency = 10000;
+    push_heap(NEW_HEAP, new_huff_node('D', frequency, NULL, NULL), frequency);
+    print_heap(NEW_HEAP);
+    frequency = 5000;
+    push_heap(NEW_HEAP, new_huff_node('E', frequency, NULL, NULL), frequency);
+    CU_ASSERT_PTR_NOT_NULL(NEW_HEAP->arr[1]);
+    CU_ASSERT_PTR_NOT_NULL(NEW_HEAP->arr[2]);
+    CU_ASSERT_PTR_NOT_NULL(NEW_HEAP->arr[3]);
+    CU_ASSERT_PTR_NOT_NULL(NEW_HEAP->arr[4]);
+    CU_ASSERT_PTR_NOT_NULL(NEW_HEAP->arr[5]);
+
+    CU_ASSERT_PTR_NULL(NEW_HUFF_ROOT);
+    NEW_HUFF_ROOT = build_huffman_tree(NEW_HEAP); 
+    CU_ASSERT_PTR_NOT_NULL(NEW_HUFF_ROOT);  
+    CU_ASSERT_PTR_NOT_NULL(NEW_HUFF_ROOT->left);  
+    CU_ASSERT_PTR_NOT_NULL(NEW_HUFF_ROOT->right);
+
 }
 
 int main()
@@ -103,7 +130,7 @@ int main()
 
     //Structures unit test
 
-     if (CU_add_test(pSuite, "\n\nTestando a criação da Heap\n.", test_create_heap)==NULL) {
+    if (CU_add_test(pSuite, "\n\nTestando a criação da Heap\n.", test_create_heap)==NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -117,9 +144,18 @@ int main()
         return CU_get_error();
     }
 
-    printf("\n");
+    if (CU_add_test(pSuite, "\n\nTestando a criação da Árvore de Huffman\n", test_create_huffman_tree)==NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    if (CU_add_test(pSuite, "\n\nTestando a inserção na Árvore de Huffman\n", test_generate_huffman_tree)==NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+
     CU_basic_run_tests();
     return CU_get_error();
+
 }
 
 
