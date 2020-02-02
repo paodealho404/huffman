@@ -1,14 +1,6 @@
 #include "huffman.h"
 #include "../frequency/frequency.h"
 
-struct _huffman_node
-{
-    u_char byte;
-    ulli freq;
-    huff_node *left;
-    huff_node *right;
-};
-
 int is_huff_empty(huff_node *huff_tree)
 {
     return (huff_tree == NULL);

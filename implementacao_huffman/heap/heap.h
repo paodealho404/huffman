@@ -22,12 +22,23 @@
  * 
  */
 typedef struct _p_node p_node_t;
+struct _p_node
+{
+    void *item;
+    ulli prio;
+};
 
 /**
  * @brief Estrutura da heap.
  * 
  */
 typedef struct _heap heap_t;
+struct _heap
+{
+    p_node_t* arr[HEAP_MAX];
+    int size;
+    int max_buffer_size;
+};
 
 
 // 

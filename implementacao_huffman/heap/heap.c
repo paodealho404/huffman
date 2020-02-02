@@ -4,23 +4,11 @@
     Nó de prioridade, possui um ponteiro pra void e um inteiro
     referente a prioridade do nó.
 */
-struct _p_node
-{
-    void *item;
-    ulli prio;
-};
 
 /*
     Estrutura de Heap; Possui um Array de p_node_t e um inteiro
     referente ao seu tamanho;
 */
-struct _heap
-{
-    p_node_t* arr[HEAP_MAX];
-    int size;
-    int max_buffer_size;
-};
-
 
 /*
     Implementacao de um pop pra heap. Se a Heap nao estiver vazia,

@@ -19,6 +19,14 @@
  * 
  */
 typedef struct _huffman_node huff_node;
+struct _huffman_node
+{
+    u_char byte;
+    ulli freq;
+    huff_node *left;
+    huff_node *right;
+};
+
 
 //
 // Return - int function()

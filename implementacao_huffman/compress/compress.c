@@ -20,7 +20,7 @@ void compress(char* filename)
 	
 	short huff_tree_size = 0;
 	huffman_tree_size(huff_tree, &huff_tree_size);
-	//printf("huff tree size = %d\n", huff_tree_size);
+	printf("huff tree size = %d\n", huff_tree_size);
 	
 	char compressed[406];
 	char ext[6] = ".huff";
