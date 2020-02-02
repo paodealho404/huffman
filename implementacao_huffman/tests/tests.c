@@ -4,6 +4,7 @@
 #include <CUnit/Basic.h>
 #include <CUnit/MyMem.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 heap_t *NEW_HEAP = NULL;
 huff_node *NEW_HUFF_ROOT = NULL;
@@ -80,23 +81,19 @@ void test_pop_heap()
 }
 void test_create_huffman_tree()
 {
-    NEW_HUFF_ROOT = NULL;
+    NEW_HUFF_ROOT = create_empty_huff_node();
     CU_ASSERT_PTR_NULL(NEW_HUFF_ROOT);
 }
 void test_generate_huffman_tree()
 {
     long long int frequency = 10000;
     push_heap(NEW_HEAP, new_huff_node('A', frequency, NULL, NULL), frequency);
-    print_heap(NEW_HEAP);
     frequency = 9000;
     push_heap(NEW_HEAP, new_huff_node('B', frequency, NULL, NULL), frequency);
-    print_heap(NEW_HEAP);
     frequency = 8000;
     push_heap(NEW_HEAP, new_huff_node('C', frequency, NULL, NULL), frequency);
-    print_heap(NEW_HEAP);
     frequency = 10000;
     push_heap(NEW_HEAP, new_huff_node('D', frequency, NULL, NULL), frequency);
-    print_heap(NEW_HEAP);
     frequency = 5000;
     push_heap(NEW_HEAP, new_huff_node('E', frequency, NULL, NULL), frequency);
     CU_ASSERT_PTR_NOT_NULL(NEW_HEAP->arr[1]);
@@ -107,10 +104,44 @@ void test_generate_huffman_tree()
 
     CU_ASSERT_PTR_NULL(NEW_HUFF_ROOT);
     NEW_HUFF_ROOT = build_huffman_tree(NEW_HEAP); 
+    print_huff_pre_order(NEW_HUFF_ROOT);
     CU_ASSERT_PTR_NOT_NULL(NEW_HUFF_ROOT);  
-    CU_ASSERT_PTR_NOT_NULL(NEW_HUFF_ROOT->left);  
+    CU_ASSERT_PTR_NOT_NULL(NEW_HUFF_ROOT->left);
     CU_ASSERT_PTR_NOT_NULL(NEW_HUFF_ROOT->right);
+    CU_ASSERT_PTR_NULL(NEW_HUFF_ROOT->left->left->left);
 
+    // **BA*D*EC
+    CU_ASSERT_EQUAL('*', NEW_HUFF_ROOT->byte);
+    CU_ASSERT_EQUAL('*', NEW_HUFF_ROOT->left->byte);
+    CU_ASSERT_EQUAL('B', NEW_HUFF_ROOT->left->left->byte);
+    CU_ASSERT_EQUAL('A', NEW_HUFF_ROOT->left->right->byte);
+    CU_ASSERT_EQUAL('*', NEW_HUFF_ROOT->right->byte);
+    CU_ASSERT_EQUAL('D', NEW_HUFF_ROOT->right->left->byte);
+    CU_ASSERT_EQUAL('*', NEW_HUFF_ROOT->right->right->byte);
+    CU_ASSERT_EQUAL('E', NEW_HUFF_ROOT->right->right->left->byte);
+    CU_ASSERT_EQUAL('C', NEW_HUFF_ROOT->right->right->right->byte);
+}
+void test_generate_huffman_tree_from_file()
+{
+    free_huff_tree(NEW_HUFF_ROOT);
+    CU_ASSERT_PTR_NOT_NULL(NEW_HUFF_ROOT);
+
+    NEW_HUFF_ROOT = NULL;
+    CU_ASSERT_PTR_NULL(NEW_HUFF_ROOT);
+
+    FILE *fp = fopen("tests/tree.txt", "rb");
+    short tree_size = 9;
+    NEW_HUFF_ROOT = build_huff_tree_from_file(fp, NEW_HUFF_ROOT, &tree_size);
+    fclose(fp);
+    CU_ASSERT_EQUAL('*', NEW_HUFF_ROOT->byte);
+    CU_ASSERT_EQUAL('*', NEW_HUFF_ROOT->left->byte);
+    CU_ASSERT_EQUAL('B', NEW_HUFF_ROOT->left->left->byte);
+    CU_ASSERT_EQUAL('A', NEW_HUFF_ROOT->left->right->byte);
+    CU_ASSERT_EQUAL('*', NEW_HUFF_ROOT->right->byte);
+    CU_ASSERT_EQUAL('D', NEW_HUFF_ROOT->right->left->byte);
+    CU_ASSERT_EQUAL('*', NEW_HUFF_ROOT->right->right->byte);
+    CU_ASSERT_EQUAL('E', NEW_HUFF_ROOT->right->right->left->byte);
+    CU_ASSERT_EQUAL('C', NEW_HUFF_ROOT->right->right->right->byte);
 }
 
 int main()
@@ -149,6 +180,10 @@ int main()
         return CU_get_error();
     }
     if (CU_add_test(pSuite, "\n\nTestando a inserção na Árvore de Huffman\n", test_generate_huffman_tree)==NULL) {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    if (CU_add_test(pSuite, "\n\nTestando a criação da Árvore de Huffman pelo arquivo\n", test_generate_huffman_tree_from_file)==NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }

@@ -2,7 +2,7 @@
 
 struct _huffman_dict
 {
-	u_char codes[256][256];
+	u_char codes[256][16];
 	unsigned short path_bits[256];
 	int length[256];
 	ulli freq[256];

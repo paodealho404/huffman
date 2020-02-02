@@ -3,11 +3,11 @@
 void compress(char* filename)
 {
     int i;
-	ulli original_size = 0;
+	ulli original_size = get_file_size(filename);
 	
 	printf("\nFile status: Reading file...\n");
 
-	heap_t *heap = make_huff_heap(filename, &original_size);
+	heap_t *heap = make_huff_heap(filename);
 	huff_node* huff_tree = build_huffman_tree(heap);
 	
     huff_dict *dict = make_huff_dict();
@@ -16,7 +16,7 @@ void compress(char* filename)
 	short trash_size = calc_trash_size(dict);
 	//printf("trash size = %d\n", trash_size);
 	
-	print_huff_dict(dict);
+	//print_huff_dict(dict);
 	
 	short huff_tree_size = 0;
 	huffman_tree_size(huff_tree, &huff_tree_size);
@@ -33,8 +33,22 @@ void compress(char* filename)
 	write_encoded_bytes(filename, dict, compressed);
 	printf("\nFile status: Compressed!!\n");
 	printf("Compressed file: %s\n\n", compressed);
+
+	ulli compressed_size = get_file_size(compressed);
+	printf("Original size: %lli\n", original_size);
+	printf("Compressed size: %lli\n", compressed_size);
+	printf("Reduction of: %lf%%\n\n\n", 100 - (((double) compressed_size / original_size) * 100));
+	free_huff_tree(huff_tree);
 }
 
+ulli get_file_size(char *filename)
+{
+	FILE *fp = fopen(filename, "r");
+	fseek(fp, 0L, SEEK_END);
+	ulli size = ftell(fp);
+	fclose(fp);
+	return size;
+}
 
 /*
 	função pra escrever o cabeçalho do arquivo comprimido;

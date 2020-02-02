@@ -40,14 +40,12 @@ void push_huff_heap(heap_t *heap, huff_node *h_node);
 //
 
 /**
- * @brief Cria uma Heap de nós de frequência com base em um arquivo informado (file_name) e altera o tamanho para 
- * o tamanho original do arquivo
+ * @brief Cria uma Heap de nós de frequência com base em um arquivo informado (file_name)
  * 
- * @param file_name 
- * @param original_size 
+ * @param file_name
  * @return heap_t* 
  */
-heap_t* make_huff_heap(char *file_name, ulli *original_size);
+heap_t* make_huff_heap(char *file_name);
 
 
 //
@@ -62,13 +60,11 @@ heap_t* make_huff_heap(char *file_name, ulli *original_size);
 ulli* make_new_freq_arr();
 
 /**
- * @brief Contabiliza os bytes de um determinado arquivo (file_name) e o tamanho em bytes 
- * (original_size).
+ * @brief Contabiliza os bytes de um determinado arquivo (file_name).
  * 
- * @param file_name 
- * @param original_size 
+ * @param file_name
  * @return ulli* 
  */
-ulli* make_count_arr(char *file_name, ulli *original_size);
+ulli* make_count_arr(char *file_name);
 
 #endif

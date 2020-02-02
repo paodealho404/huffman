@@ -62,6 +62,13 @@ int is_huff_leaf(huff_node *node);
 //
 
 /**
+ * @brief Create a empty huff node object
+ * 
+ * @return huff_node* 
+ */
+huff_node* create_empty_huff_node();
+
+/**
  * @brief Cria, inicializa e retorna um novo nó da Árvore de Huffman com
  * um byte informado (byte), uma dada frequência e os nós da esquerda e direita
  * ,respectivamente. 
@@ -142,5 +149,7 @@ u_char get_byte(huff_node *node);
 void save_huff_to_file(huff_node *node, char* filename);
 
 huff_node* build_huff_tree_from_file(FILE *fp, huff_node *huff_tree, short *huff_tree_size);
+
+void free_huff_tree(huff_node *root);
 
 #endif

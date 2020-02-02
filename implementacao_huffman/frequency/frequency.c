@@ -32,10 +32,10 @@ void push_huff_heap(heap_t *heap, huff_node *h_node)
 	Retorna a heap ja pronta. Talvez precise ficar mais abstrato.
 */
 
-heap_t* make_huff_heap(char *file_name, ulli *original_size)
+heap_t* make_huff_heap(char *file_name)
 {
 	heap_t *heap = make_heap();
-	ulli *freq_arr = make_count_arr(file_name, original_size);
+	ulli *freq_arr = make_count_arr(file_name);
 
 	for(int i = 0; i < MAX_BYTE; i++)
 	{
@@ -68,7 +68,7 @@ ulli* make_new_freq_arr()
 	frequencia desse byte. Pra cada byte encontrado ele incrementa
 	um no indice do mesmo.
 */
-ulli* make_count_arr(char *file_name, ulli *original_size)
+ulli* make_count_arr(char *file_name)
 {
 	FILE* file_ptr = open_file(file_name);
 	ulli *freq_arr = make_new_freq_arr();
@@ -77,8 +77,6 @@ ulli* make_count_arr(char *file_name, ulli *original_size)
 	while(fscanf(file_ptr, "%c", &byte) != EOF)
 	{
 		freq_arr[byte]++;
-
-		*original_size++;
 	}
 
 	fclose(file_ptr);

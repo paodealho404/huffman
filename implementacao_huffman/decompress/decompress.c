@@ -20,6 +20,8 @@ void decompress(char *filename)
 
     write_decompressed_bytes(fp, huff_tree, trash_size, fopen(dec_name, "wb"));
 
+    printf("\nDone!\n\n");
+
     fclose(fp);
 }
 

@@ -11,6 +11,11 @@ int is_huff_leaf(huff_node *node)
     return (is_huff_empty(node->left) && is_huff_empty(node->right));
 }
 
+huff_node* create_empty_huff_node()
+{
+	return NULL;
+} 
+
 huff_node* new_huff_node(u_char byte, ulli freq, 
 						huff_node *left, huff_node *right)
 {
@@ -141,4 +146,14 @@ huff_node* build_huff_tree_from_file(FILE *fp, huff_node *huff_tree, short *huff
         }
     }
 	return huff_tree;
+}
+
+void free_huff_tree(huff_node *root)
+{
+	if(!is_huff_empty(root))
+	{
+		free_huff_tree(root->left);
+		free_huff_tree(root->right);
+		free(root);
+	}
 }
