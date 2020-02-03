@@ -14,7 +14,8 @@ void decompress(char *filename)
     char dec_name[strlen(filename)];
     strcpy(dec_name, filename);
     dec_name[strlen(dec_name) - 5] = '\0';
-
+    printf("Decompressing file\n\n");
+    printf("Decompressed file: %s", dec_name);
     write_decompressed_bytes(fp, huff_tree, trash_size, fopen(dec_name, "wb"));
 
     printf("\nDone!\n\n");
