@@ -102,7 +102,6 @@ void huffman_tree_size(huff_node *node, short *huff_tree_size)
 	}
 }
 
-// imprime a huff tree em pre-ordem no arquivo comprimido.
 void save_huff_to_file(huff_node *node, char* filename)
 {
 	if(node)

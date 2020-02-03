@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//
+// Structs
+//
+
 /**
  * @brief Tipo padrão para abreviar unsigned char
  * 
@@ -15,6 +19,22 @@ typedef unsigned char u_char;
  * 
  */
 typedef unsigned long long int ulli;
+
+//
+// Return void - function()
+//
+
+/**
+ * @brief Imprime um byte informado
+ * 
+ * @param byte 
+ */
+void print_byte(u_char byte);
+
+
+//
+// Return int - function()
+//
 
 /**
  * @brief Verifica o estado do bit de posição 'i' de um dado Byte
@@ -34,8 +54,18 @@ int is_bit_i_set(unsigned char x, int i);
  */
 int set_bit(unsigned char x, int i);
 
+
+//
+// Return FILE* - function()
+//
+
+/**
+ * @brief Abre um arquivo informado (file_name) e retorna seu ponteiro.
+ * 
+ * @param file_name 
+ * @return FILE* 
+ */
 FILE* open_file(char *file_name);
 
-void print_byte(u_char byte);
 
 #endif

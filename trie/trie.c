@@ -71,7 +71,7 @@ int has_children(TRIE *node)
     for (i = 0; i < CHAR_SIZE; i++)
     {
         if (node->character[i])
-            return 1; //encontrou um filho porque a posição não é nula
+            return 1;
     }
 
     return 0;

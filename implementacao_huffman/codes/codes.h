@@ -90,6 +90,7 @@ u_char* get_code(huff_dict *dict, u_char byte);
 //
 // Return - short function()
 //
+
 /**
  * @brief Calcula o tamanho do lixo gerado pela Árvore de Huffman a partir de um
  * dicionário de bytes (dict).
