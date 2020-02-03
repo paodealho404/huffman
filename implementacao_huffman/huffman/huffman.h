@@ -33,14 +33,6 @@ struct _huffman_node
 //
 
 /**
- * @brief Retorna a frequência do Byte de um dado nó de uma Árvore de Huffman informada (node).
- * 
- * @param node 
- * @return unsigned long long int
- */
-ulli get_frequency(huff_node *node);
-
-/**
  * @brief Verifica se a árvore de Huffman informada (huff_tree) está vazia.
  * 
  * @param huff_tree 
@@ -58,7 +50,7 @@ int is_huff_leaf(huff_node *node);
 
 
 //
-// Return - huff_node function()
+// Return - huff_node* function()
 //
 
 /**
@@ -106,6 +98,16 @@ huff_node* get_left_node(huff_node *node);
  */
 huff_node* get_right_node(huff_node *node);
 
+/**
+ * @brief Constrói uma Árvore de Huffman a partir de um dado aquivo (fp) e um tamanho
+ * de lixo informado (huff_tree_size), em uma determinada Árvore de Huffman vazia (huff_tree).
+ * 
+ * @param fp 
+ * @param huff_tree 
+ * @param huff_tree_size 
+ * @return huff_node* 
+ */
+huff_node* build_huff_tree_from_file(FILE *fp, huff_node *huff_tree, short *huff_tree_size);
 
 
 //
@@ -127,6 +129,21 @@ void print_huff_pre_order(huff_node *root);
  */
 void huffman_tree_size(huff_node *node, short *huff_tree_size);
 
+/**
+ * @brief Libera o espaço alocado pelas variáveis que armazenam os nós da Árvore de Huffman.
+ * 
+ * @param root 
+ */
+void free_huff_tree(huff_node *root);
+
+/**
+ * @brief Salva a Huffman Tree (node) em pré-ordem em um determinado arquivo indicado (filename).
+ * 
+ * @param node 
+ * @param filename 
+ */
+void save_huff_to_file(huff_node *node, char* filename);
+
 
 //
 // Return - u_char function()
@@ -140,16 +157,16 @@ void huffman_tree_size(huff_node *node, short *huff_tree_size);
  */
 u_char get_byte(huff_node *node);
 
+
+//
+// Return ulli - function()
+//
 /**
- * @brief Salva a Huffman Tree (node) em pre-ordem no arquivo indicado por filename.
+ * @brief Retorna a frequência do Byte de um dado nó de uma Árvore de Huffman informada (node).
  * 
  * @param node 
- * @param filename 
+ * @return unsigned long long int
  */
-void save_huff_to_file(huff_node *node, char* filename);
-
-huff_node* build_huff_tree_from_file(FILE *fp, huff_node *huff_tree, short *huff_tree_size);
-
-void free_huff_tree(huff_node *root);
+ulli get_frequency(huff_node *node);
 
 #endif

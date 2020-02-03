@@ -14,11 +14,11 @@
 #define HEAP_MAX 257
 
 //
-//Structs
+// Structs
 //
 
 /**
- * @brief Nó padrão para a heap.
+ * @brief Nó padrão de prioridade para a Heap.
  * 
  */
 typedef struct _p_node p_node_t;
@@ -29,7 +29,7 @@ struct _p_node
 };
 
 /**
- * @brief Estrutura da heap.
+ * @brief Estrutura padrão da Heap.
  * 
  */
 typedef struct _heap heap_t;
@@ -94,6 +94,14 @@ void print_heap(heap_t *heap);
  */
 void print_arr(int arr[], int n);
 
+/**
+ * @brief Retorna o item de um nó da Heap.
+ * 
+ * @param node 
+ * @return void* 
+ */
+void* get_node_item(p_node_t *node);
+
 
 //
 // Return - int function()
@@ -124,9 +132,17 @@ int get_right_son(int i);
  */
 int get_left_son(int i);
 
+/**
+ * @brief Retorna o tamanho (size) de uma Heap informada.
+ * 
+ * @param heap 
+ * @return int 
+ */
+int get_size(heap_t *heap);
+
 
 //
-// Return - p_node_t function()
+// Return - p_node_t* function()
 //
 
 /**
@@ -157,29 +173,14 @@ p_node_t* pop_heap(heap_t *heap);
 
 
 //
-// Heap
+// Return - heap_t* function()
 //
+
 /**
  * @brief Cria e inicializa uma Heap nova.
  * 
  * @return heap_t* 
  */
 heap_t* make_heap();
-
-/**
- * @brief Retorna o item de um nó da Heap.
- * 
- * @param node 
- * @return void* 
- */
-void* get_node_item(p_node_t *node);
-
-/**
- * @brief retorna o tamanho (size) de uma heap
- * 
- * @param heap 
- * @return int 
- */
-int get_size(heap_t *heap);
 
 #endif

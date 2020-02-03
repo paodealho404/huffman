@@ -70,7 +70,6 @@ int get_code_size(huff_dict *dict, u_char byte)
 	return dict->length[byte];
 }
 
-//pega o array do novo codigo de um byte
 u_char* get_code(huff_dict *dict, u_char byte)
 {
 	return dict->codes[byte];
