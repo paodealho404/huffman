@@ -1,29 +1,24 @@
-# Comparison and Plotting
+# Contagem e Plotagem
 
-## Binary Search Tree vs. AVL Tree
+## ABB vs. AVL
 
-### Compile main program
-
-```bash
-    gcc avl.c binary_tree.c main.c -o main
-```
-
-### Run main program
+### Compilar e executar programa de contagem
 
 ```bash
+    make plot
     ./main
 ```
 
-* First it will read all 50000 numbers from the file number_list.txt;
-* Then you will be able to enter the numbers to be searched via command line;
-* The data is outputed in the out.txt file.
+* O programa vai ler 25000 números (listados em ordem aleatória) do arquivo number_list.txt;
+* Automaticamente irá sortear números para realizar as comparações;
+* A saída será gravada no arquivo out.txt.
 
-### Plot
+### Plotagem
 
-After collecting the necessary data, open the iPython Notebook and run all the cells, or run the script:
+Depois de executar o programa de contagem, execute o programa em python para gerar os gráficos:
 
 ```bash
     python plot.py
 ```
 
-Requirements: Python 3, Matplotlib and Numpy
+Requirementos: Python 3, Matplotlib e Numpy
